@@ -1,0 +1,17 @@
+[package]
+name = "hello-embed"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "hello-embed"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # better optimizations
+debug = true # symbols are nice and they don't increase the size on Flash
+lto = true # better optimizations
