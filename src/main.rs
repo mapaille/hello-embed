@@ -21,7 +21,6 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 #[unsafe(no_mangle)]
-#[inline(always)]
 pub unsafe extern "C" fn reset_handler() -> ! {
     clock::use_high_frequency_clock();
     enable_global_interrupts();
