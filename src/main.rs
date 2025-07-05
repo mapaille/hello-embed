@@ -5,11 +5,16 @@ mod peripherals;
 mod drivers;
 mod power;
 mod clock;
+mod pin;
+mod interrupt;
 
 use core::panic::PanicInfo;
-use peripherals::{rtc, temp};
-use drivers::screen::{ROW_PINS, COL_PINS, Screen, animations};
-use drivers::screen::frames::get_digit; 
+use peripherals::{gpio, rtc, temp};
+use drivers::screen::{animations, frames, Screen};
+use pin::Pin;
+
+const SCREEN_ROW_PINS: [Pin; 5] = [gpio::p0::ROW1, gpio::p0::ROW2, gpio::p0::ROW3, gpio::p0::ROW4, gpio::p0::ROW5];
+const SCREEN_COL_PINS: [Pin; 5] = [gpio::p0::COL1, gpio::p0::COL2, gpio::p0::COL3, gpio::p1::COL4, gpio::p0::COL5];
 
 unsafe extern "C" {
     static _stack_start: u32;
@@ -23,24 +28,22 @@ fn panic(_info: &PanicInfo) -> ! {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
     clock::use_high_frequency_clock();
-    enable_global_interrupts();
+    interrupt::enable_global_interrupts();
     rtc::init();
 
-    let mut screen = Screen::init(ROW_PINS, COL_PINS);
+    let mut screen = Screen::init(SCREEN_ROW_PINS, SCREEN_COL_PINS);
     
     screen.play_animation_for(&animations::ANIMATION_LOADING, 30, 2);
-    screen.play_animation_for(&animations::ANIMATION_HEARTBEAT, 5, 5);
-
     power::enable_low_power();
     clock::use_low_frequency_clock();
 
     loop {
-        screen.play_animation_once(&animations::ANIMATION_LOVE, 2);
-
         temp::start();
+        screen.play_animation_once(&animations::ANIMATION_LOVE, 2);
+        screen.play_animation_for(&animations::ANIMATION_HEARTBEAT, 5, 3);
 
         while !temp::is_ready() {
-            wfi();
+            interrupt::wfi();
         }
 
         temp::stop();
@@ -48,23 +51,16 @@ pub unsafe extern "C" fn reset_handler() -> ! {
         let t = temp::read_temp() / 4;
 
         if t < 100 {
-            let first_digit: u8 = (t / 10).try_into().expect("The first digit should be between 0 and 9");
-            let second_digit: u8 = (t % 10).try_into().expect("The second digit should be between 0 and 9");
+            let first_digit = frames::get_digit(t / 10).unwrap_or(&frames::DIGIT_0);
+            let second_digit = frames::get_digit(t % 10).unwrap_or(&frames::DIGIT_0);
 
-            screen.refresh_for(get_digit(first_digit).expect("The digit should be between 0 and 9"), 500);
-            screen.refresh_for(get_digit(second_digit).expect("The digit should be between 0 and 9"), 500);
+            screen.refresh_for(first_digit, 500);
+            screen.refresh_for(second_digit, 500);
         }
 
         temp::clear();
         screen.clear();
-
         rtc::wait_ticks(500);
-    }
-}
-
-fn enable_global_interrupts() {
-    unsafe {
-        core::arch::asm!("cpsie i", options(nomem, nostack, preserves_flags));
     }
 }
 
@@ -151,9 +147,3 @@ pub static VECTORS: [Vector; 16 + 48] = [
     Vector { reserved: 0 },                                   // 46  IPC
     Vector { reserved: 0 },                                   // 47  SPIM4
 ];
-
-pub fn wfi() {
-    unsafe {
-        core::arch::asm!("wfi", options(nomem, nostack, preserves_flags));
-    }
-}

@@ -2,13 +2,9 @@ pub mod frames;
 pub mod animations;
 
 use core::sync::atomic::Ordering;
-use crate::peripherals::gpio::{p0, p1};
-use crate::peripherals::pin::Pin;
+use crate::pin::Pin;
 use crate::rtc::RTC_TICKS;
-use crate::wfi;
-
-pub const ROW_PINS: [Pin; 5] = [p0::ROW1, p0::ROW2, p0::ROW3, p0::ROW4, p0::ROW5];
-pub const COL_PINS: [Pin; 5] = [p0::COL1, p0::COL2, p0::COL3, p1::COL4, p0::COL5];
+use crate::interrupt::wfi;
 
 pub struct Screen<const X : usize, const Y : usize> {
     pub row_pins: [Pin; Y],
@@ -78,5 +74,3 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         self.refresh_once(&frames::frame::Frame(&[[false; X]; Y]));
     }
 }
-
-

@@ -1,17 +1,16 @@
-use crate::drivers::screen::frames::{images, letters, symbols};
+use crate::drivers::screen::frames::{letters, symbols};
 use crate::drivers::screen::frames::frame::Frame;
 
 pub struct Animation<const X: usize, const Y: usize, const SIZE: usize> {
     pub frames: &'static[&'static Frame<X, Y>; SIZE],
 }
 
-pub const ANIMATION_LOVE: Animation<5, 5, 5> = Animation {
+pub const ANIMATION_LOVE: Animation<5, 5, 4> = Animation {
     frames: &[
         &letters::LETTER_E,
         &symbols::SYMBOL_PLUS,
         &letters::LETTER_M,
         &symbols::SYMBOL_EQUAL,
-        &images::IMAGE_HEART,
     ],
 };
 

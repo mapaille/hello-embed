@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::peripherals::pin::Pin;
+use crate::pin::Pin;
 
 pub const BASE: u32 = 0x5000_0300;
 

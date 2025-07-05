@@ -13,7 +13,7 @@ pub use letters::*;
 pub use symbols::*;
 pub use images::*; 
 
-pub fn get_digit(digit: u8) -> Option<&'static Frame<5, 5>> {
+pub fn get_digit(digit: u32) -> Option<&'static Frame<5, 5>> {
     match digit {
         0 => Some(&DIGIT_0),
         1 => Some(&DIGIT_1),
