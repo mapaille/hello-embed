@@ -19,7 +19,9 @@ pub fn run(screen: &mut Screen<5, 5>) -> ! {
         }
 
         temp::stop();
-        let temperature = temp::read_temp() / 4;
+        
+        // Round to nearest whole number: add half the divisor (2) before dividing by 4
+        let temperature = (temp::read_temp() + 2) / 4;
 
         display_temperature(screen, temperature);
 
