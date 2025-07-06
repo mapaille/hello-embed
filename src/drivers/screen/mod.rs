@@ -1,22 +1,18 @@
-pub mod frames;
 pub mod animations;
+pub mod frames;
 
-use core::sync::atomic::Ordering;
-use crate::pin::Pin;
-use crate::rtc::RTC_TICKS;
 use crate::interrupt::wfi;
+use crate::timing::repeat_for_ticks;
+use crate::pin::Pin;
 
-pub struct Screen<const X : usize, const Y : usize> {
+pub struct Screen<const X: usize, const Y: usize> {
     pub row_pins: [Pin; Y],
     pub col_pins: [Pin; X],
 }
 
 impl<const X: usize, const Y: usize> Screen<X, Y> {
     pub fn init(row_pins: [Pin; Y], col_pins: [Pin; X]) -> Self {
-        let screen = Screen {
-            row_pins,
-            col_pins,
-        };
+        let screen = Screen { row_pins, col_pins };
 
         for pin in screen.row_pins.iter() {
             pin.as_output().set_low();
@@ -48,15 +44,16 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
 
     #[inline(always)]
     pub fn refresh_for(&mut self, frame: &frames::frame::Frame<X, Y>, ticks: u32) {
-        let start = RTC_TICKS.load(Ordering::Relaxed);
-        let target = start.wrapping_add(ticks);
-
-        while (RTC_TICKS.load(Ordering::Relaxed).wrapping_sub(target) as i32) < 0 {
+        repeat_for_ticks(ticks, || {
             self.refresh_once(frame);
-        }
+        });
     }
 
-    pub fn play_animation_once<const SIZE: usize>(&mut self, animation: &animations::Animation<X, Y, SIZE>, fps: u32) {
+    pub fn play_animation_once<const SIZE: usize>(
+        &mut self,
+        animation: &animations::Animation<X, Y, SIZE>,
+        fps: u32,
+    ) {
         let frame_duration = 1000 / fps;
 
         for frame in animation.frames.iter() {
@@ -64,7 +61,12 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         }
     }
 
-    pub fn play_animation_for<const SIZE: usize>(&mut self, animation: &animations::Animation<X, Y, SIZE>, fps: u32, times: u32) {
+    pub fn play_animation_for<const SIZE: usize>(
+        &mut self,
+        animation: &animations::Animation<X, Y, SIZE>,
+        fps: u32,
+        times: u32,
+    ) {
         for _ in 0..times {
             self.play_animation_once(animation, fps)
         }
