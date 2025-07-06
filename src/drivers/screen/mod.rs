@@ -3,15 +3,15 @@ pub mod frames;
 
 use crate::interrupt::wfi;
 use crate::timing::repeat_for_ticks;
-use crate::pin::Pin;
+use crate::peripherals::gpio::GpioPin;
 
 pub struct Screen<const X: usize, const Y: usize> {
-    pub row_pins: [Pin; Y],
-    pub col_pins: [Pin; X],
+    pub row_pins: [GpioPin; Y],
+    pub col_pins: [GpioPin; X],
 }
 
 impl<const X: usize, const Y: usize> Screen<X, Y> {
-    pub fn init(row_pins: [Pin; Y], col_pins: [Pin; X]) -> Self {
+    pub fn init(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
         let screen = Screen { row_pins, col_pins };
 
         for pin in screen.row_pins.iter() {

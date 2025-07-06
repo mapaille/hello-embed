@@ -13,18 +13,18 @@ const PIN_CNF_INPUT_PULLUP: u32 = (0 << 0) | // DIR   = input
     (0 << 1) | // INPUT = connect
     (3 << 2); // PULL  = pull-up
 
-pub struct Pin {
+pub struct GpioPin {
     pub base: u32,
     pub offset: usize,
 }
 
-impl Pin {
-    pub fn as_output(&self) -> &Pin {
+impl GpioPin {
+    pub fn as_output(&self) -> &GpioPin {
         write(self.base as *mut u32, PIN_CNF_BASE + &self.offset, PIN_CNF_OUTPUT);
         self
     }
 
-    pub fn as_input_pullup(&self) -> &Pin {
+    pub fn as_input_pullup(&self) -> &GpioPin {
         write(self.base as *mut u32, PIN_CNF_BASE + self.offset, PIN_CNF_INPUT_PULLUP);
         self
     }
