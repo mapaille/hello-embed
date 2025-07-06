@@ -18,7 +18,7 @@ pub struct GpioPin {
 }
 
 impl GpioPin {
-    pub const unsafe fn new(base: u32, offset: usize) -> Self {
+    pub const fn new(base: u32, offset: usize) -> Self {
         Self {
             base: unsafe { ptr::NonNull::new_unchecked(base as *mut u32) },
             offset,
