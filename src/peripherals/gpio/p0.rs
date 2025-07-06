@@ -4,62 +4,26 @@ use super::gpio_pin::GpioPin;
 
 pub const BASE: u32 = 0x5000_0000;
 
-pub const RING0: GpioPin = GpioPin {
-    base: BASE,
-    offset: 0,
-};
+pub const RING0: GpioPin = unsafe { GpioPin::new(BASE, 0) };
 
-pub const COL2: GpioPin = GpioPin {
-    base: BASE,
-    offset: 11,
-};
+pub const COL2: GpioPin = unsafe { GpioPin::new(BASE, 11) };
 
-pub const BTN_A: GpioPin = GpioPin {
-    base: BASE,
-    offset: 14,
-};
+pub const BTN_A: GpioPin = unsafe { GpioPin::new(BASE, 14) };
 
-pub const ROW3: GpioPin = GpioPin {
-    base: BASE,
-    offset: 15,
-};
+pub const ROW3: GpioPin = unsafe { GpioPin::new(BASE, 15) };
 
-pub const ROW5: GpioPin = GpioPin {
-    base: BASE,
-    offset: 19,
-};
+pub const ROW5: GpioPin = unsafe { GpioPin::new(BASE, 19) };
 
-pub const ROW1: GpioPin = GpioPin {
-    base: BASE,
-    offset: 21,
-};
+pub const ROW1: GpioPin = unsafe { GpioPin::new(BASE, 21) };
 
-pub const ROW2: GpioPin = GpioPin {
-    base: BASE,
-    offset: 22,
-};
+pub const ROW2: GpioPin = unsafe { GpioPin::new(BASE, 22) };
 
-pub const BTN_B: GpioPin = GpioPin {
-    base: BASE,
-    offset: 23,
-};
+pub const BTN_B: GpioPin = unsafe { GpioPin::new(BASE, 23) };
 
-pub const ROW4: GpioPin = GpioPin {
-    base: BASE,
-    offset: 24,
-};
+pub const ROW4: GpioPin = unsafe { GpioPin::new(BASE, 24) };
 
-pub const COL1: GpioPin = GpioPin {
-    base: BASE,
-    offset: 28,
-};
+pub const COL1: GpioPin = unsafe { GpioPin::new(BASE, 28) };
 
-pub const COL5: GpioPin = GpioPin {
-    base: BASE,
-    offset: 30,
-};
+pub const COL5: GpioPin = unsafe { GpioPin::new(BASE, 30) };
 
-pub const COL3: GpioPin = GpioPin {
-    base: BASE,
-    offset: 31,
-};
+pub const COL3: GpioPin = unsafe { GpioPin::new(BASE, 31) };
