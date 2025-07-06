@@ -10,9 +10,7 @@ pub const INPUT: usize = 0x510 / 4;
 
 const PIN_CNF_BASE: usize = 0x700 / 4;
 const PIN_CNF_OUTPUT: u32 = 1 << 0; // DIR = output
-const PIN_CNF_INPUT_PULLUP: u32 = (0 << 0) | // DIR   = input
-    (0 << 1) | // INPUT = connect
-    (3 << 2); // PULL  = pull-up
+const PIN_CNF_INPUT_PULLUP: u32 = 3 << 2; // PULL = pull-up
 
 pub struct GpioPin {
     base: ptr::NonNull<u32>,
