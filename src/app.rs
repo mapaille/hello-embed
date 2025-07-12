@@ -1,42 +1,38 @@
-use crate::{
-    drivers::screen::{animations, frames, Screen},
-    peripherals::temp,
-    timing::wait_ticks,
-    interrupt
-};
+#![allow(dead_code)]
+
+use core::sync::atomic::{AtomicU8, Ordering};
+use crate::cancellation::CancellationTokenSource;
+use crate::drivers::screen::animations::ANIMATION_LOADING;
+use crate::drivers::screen::Screen;
+use crate::interrupt::wfi;
+use crate::programs::Program;
+use crate::programs::love_program::LoveProgram;
+use crate::programs::temp_program::TempProgram;
+
+pub static ACTIVE_PROGRAM: AtomicU8 = AtomicU8::new(ActiveProgram::Startup as u8);
+pub static CANCELLATION_TOKEN_SOURCE: CancellationTokenSource = CancellationTokenSource::new();
 
 pub fn run(screen: &mut Screen<5, 5>) -> ! {
-    screen.play_animation_for(&animations::ANIMATION_LOADING, 30, 2);
-    
-    loop {
-        temp::start();
-        
-        screen.play_animation_once(&animations::ANIMATION_LOVE, 2);
-        screen.play_animation_for(&animations::ANIMATION_HEARTBEAT, 5, 3);
+    screen.play_animation_for(&ANIMATION_LOADING, 30, 2);
 
-        while !temp::is_ready() {
-            interrupt::wfi();
+    loop {
+        let active_program = ACTIVE_PROGRAM.load(Ordering::Relaxed);
+
+        if active_program == ActiveProgram::Love as u8 {
+            LoveProgram.run(screen, &CANCELLATION_TOKEN_SOURCE.token);
+        }
+        else if active_program == ActiveProgram::Temp as u8 {
+            TempProgram.run(screen, &CANCELLATION_TOKEN_SOURCE.token);
         }
 
-        temp::stop();
-        
-        // Round to nearest whole number: add half the divisor (2) before dividing by 4
-        let temperature = (temp::read_temp() + 2) / 4;
-
-        display_temperature(screen, temperature);
-
-        temp::clear();
-        screen.clear();
-        wait_ticks(500);
+        ACTIVE_PROGRAM.store(ActiveProgram::Startup as u8, Ordering::Relaxed);
+        CANCELLATION_TOKEN_SOURCE.reset();
+        wfi();
     }
 }
 
-fn display_temperature(screen: &mut Screen<5, 5>, temperature: u32) {
-    if temperature < 100 {
-        let first_digit = frames::get_digit(temperature / 10).unwrap_or(&frames::DIGIT_0);
-        let second_digit = frames::get_digit(temperature % 10).unwrap_or(&frames::DIGIT_0);
-
-        screen.refresh_for(first_digit, 500);
-        screen.refresh_for(second_digit, 500);
-    }
+pub enum ActiveProgram {
+    Startup,
+    Love,
+    Temp,
 }

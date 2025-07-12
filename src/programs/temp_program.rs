@@ -1,0 +1,41 @@
+use crate::drivers::screen::{frames, Screen};
+use crate::interrupt;
+use crate::peripherals::temp;
+use crate::programs::{CancellationToken, Program};
+use crate::timing::wait_ticks;
+
+pub struct TempProgram;
+
+impl Program for TempProgram {
+    fn run(&mut self, screen: &mut Screen<5, 5>, cancellation_token: &CancellationToken) {
+        if cancellation_token.is_cancelled() {
+            return;
+        }
+        
+        temp::start();
+
+        while !temp::is_ready() {
+            interrupt::wfi();
+        }
+
+        temp::stop();
+
+        // Round to nearest whole number: add half the divisor (2) before dividing by 4
+        let temperature = (temp::read_temp() + 2) / 4;
+
+        display_temperature(screen, temperature);
+        temp::clear();
+        screen.clear();
+        wait_ticks(500, cancellation_token);
+    }
+}
+
+fn display_temperature(screen: &mut Screen<5, 5>, temperature: u32) {
+    if temperature < 100 {
+        let first_digit = frames::get_digit(temperature / 10).unwrap_or(&frames::DIGIT_0);
+        let second_digit = frames::get_digit(temperature % 10).unwrap_or(&frames::DIGIT_0);
+
+        screen.refresh_for(first_digit, 500);
+        screen.refresh_for(second_digit, 500);
+    }
+}

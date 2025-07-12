@@ -15,6 +15,8 @@ const RTC0_IRQ_NUMBER: u32 = 11;
 const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
 use core::sync::atomic::{AtomicU32, Ordering};
+use crate::app::{ActiveProgram, ACTIVE_PROGRAM, CANCELLATION_TOKEN_SOURCE};
+use crate::peripherals::gpio;
 
 pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
 
@@ -30,9 +32,33 @@ pub fn init() {
 }
 
 #[unsafe(no_mangle)]
+#[inline(always)]
 pub extern "C" fn rtc0_handler() {
-    if unsafe { core::ptr::read_volatile(EVENTS_TICK) } != 0 {
+    if unsafe { core::ptr::read_volatile(EVENTS_TICK) != 0 } {
         unsafe { core::ptr::write_volatile(EVENTS_TICK, 0) };
         RTC_TICKS.fetch_add(1, Ordering::Relaxed);
+        check_buttons_and_update_program();
+    }
+}
+
+fn check_buttons_and_update_program() {
+    let active_program = ACTIVE_PROGRAM.load(Ordering::Relaxed);
+    let new_program = determine_program_from_buttons();
+    
+    if active_program != new_program {
+        ACTIVE_PROGRAM.store(new_program, Ordering::Relaxed);
+        CANCELLATION_TOKEN_SOURCE.cancel();
+    }
+}
+
+fn determine_program_from_buttons() -> u8 {
+    if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
+        ActiveProgram::Startup as u8
+    } else if gpio::p0::BTN_A.is_low() {
+        ActiveProgram::Love as u8
+    } else if gpio::p0::BTN_B.is_low() {
+        ActiveProgram::Temp as u8
+    } else {
+        ACTIVE_PROGRAM.load(Ordering::Relaxed)
     }
 }

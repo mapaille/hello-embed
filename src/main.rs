@@ -1,6 +1,5 @@
 #![no_std]
 #![no_main]
-
 mod peripherals;
 mod drivers;
 mod power;
@@ -10,6 +9,8 @@ mod timing;
 mod vector_table;
 mod system;
 mod app;
+mod programs;
+mod cancellation;
 
 use core::panic::PanicInfo;
 use peripherals::gpio;
