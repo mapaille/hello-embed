@@ -10,8 +10,8 @@ impl Program for LoveProgram {
             return;
         }
 
-        screen.play_animation_once(&animations::ANIMATION_LOVE, 2);
-        screen.play_animation_for(&animations::ANIMATION_HEARTBEAT, 5, 3);
+        screen.play_animation_once(&animations::ANIMATION_LOVE, 2, cancellation_token);
+        screen.play_animation_for(&animations::ANIMATION_HEARTBEAT, 5, 3, cancellation_token);
         wait_ticks(500, cancellation_token);
     }
 }

@@ -1,6 +1,7 @@
 pub mod animations;
 pub mod frames;
 
+use crate::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
@@ -43,21 +44,34 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
     }
 
     #[inline(always)]
-    pub fn refresh_for(&mut self, frame: &frames::frame::Frame<X, Y>, ticks: u32) {
-        repeat_for_ticks(ticks, || {
-            self.refresh_once(frame);
-        });
+    pub fn refresh_for(
+        &mut self,
+        frame: &frames::frame::Frame<X, Y>,
+        ticks: u32,
+        cancellation_token: &CancellationToken,
+    ) {
+        repeat_for_ticks(
+            ticks,
+            || {
+                self.refresh_once(frame);
+            },
+            cancellation_token,
+        );
     }
 
     pub fn play_animation_once<const SIZE: usize>(
         &mut self,
         animation: &animations::Animation<X, Y, SIZE>,
         fps: u32,
+        cancellation_token: &CancellationToken,
     ) {
         let frame_duration = 1000 / fps;
 
         for frame in animation.frames.iter() {
-            self.refresh_for(frame, frame_duration);
+            if cancellation_token.is_cancelled() {
+                return;
+            }
+            self.refresh_for(frame, frame_duration, cancellation_token);
         }
     }
 
@@ -66,9 +80,13 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         animation: &animations::Animation<X, Y, SIZE>,
         fps: u32,
         times: u32,
+        cancellation_token: &CancellationToken,
     ) {
         for _ in 0..times {
-            self.play_animation_once(animation, fps)
+            if cancellation_token.is_cancelled() {
+                return;
+            }
+            self.play_animation_once(animation, fps, cancellation_token)
         }
     }
 
