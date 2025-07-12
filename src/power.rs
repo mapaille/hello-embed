@@ -2,7 +2,7 @@
 
 pub const BASE_ADDRESS: u32 = 0x4000_0000;
 
-const TASKS_LOWPWR: *mut u32 = (BASE_ADDRESS + 0x7C)as *mut u32;
+const TASKS_LOWPWR: *mut u32 = (BASE_ADDRESS + 0x7C) as *mut u32;
 
 pub fn enable_low_power() {
     #[cfg(not(debug_assertions))]

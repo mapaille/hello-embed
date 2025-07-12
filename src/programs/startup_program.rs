@@ -1,4 +1,4 @@
-use crate::drivers::screen::{animations, Screen};
+use crate::drivers::screen::{Screen, animations};
 use crate::programs::{CancellationToken, Program};
 
 pub struct StartupProgram;

@@ -1,5 +1,5 @@
-use crate::{clock, interrupt, peripherals::rtc, power};
 use crate::peripherals::gpio;
+use crate::{clock, interrupt, peripherals::rtc, power};
 
 pub unsafe fn init() {
     clock::use_high_frequency_clock();

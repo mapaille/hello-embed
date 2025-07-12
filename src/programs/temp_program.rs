@@ -1,4 +1,4 @@
-use crate::drivers::screen::{frames, Screen};
+use crate::drivers::screen::{Screen, frames};
 use crate::interrupt;
 use crate::peripherals::temp;
 use crate::programs::{CancellationToken, Program};
@@ -11,7 +11,7 @@ impl Program for TempProgram {
         if cancellation_token.is_cancelled() {
             return;
         }
-        
+
         temp::start();
 
         while !temp::is_ready() {

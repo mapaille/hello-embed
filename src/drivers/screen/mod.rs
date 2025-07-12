@@ -2,8 +2,8 @@ pub mod animations;
 pub mod frames;
 
 use crate::interrupt::wfi;
-use crate::timing::repeat_for_ticks;
 use crate::peripherals::gpio::GpioPin;
+use crate::timing::repeat_for_ticks;
 
 pub struct Screen<const X: usize, const Y: usize> {
     pub row_pins: [GpioPin; Y],

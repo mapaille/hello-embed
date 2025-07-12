@@ -1,17 +1,17 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 
+pub mod digits;
 pub mod frame;
 pub mod images;
 pub mod letters;
-pub mod digits;
 pub mod symbols;
 
-pub use frame::Frame;
 pub use digits::*;
+pub use frame::Frame;
+pub use images::*;
 pub use letters::*;
 pub use symbols::*;
-pub use images::*; 
 
 pub fn get_digit(digit: u32) -> Option<&'static Frame<5, 5>> {
     match digit {

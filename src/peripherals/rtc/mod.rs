@@ -14,9 +14,9 @@ const CC0: *mut u32 = (RTC0_BASE + 0x540) as *mut u32;
 const RTC0_IRQ_NUMBER: u32 = 11;
 const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
-use core::sync::atomic::{AtomicU32, Ordering};
-use crate::app::{ActiveProgram, ACTIVE_PROGRAM, CANCELLATION_TOKEN_SOURCE};
+use crate::app::{ACTIVE_PROGRAM, ActiveProgram, CANCELLATION_TOKEN_SOURCE};
 use crate::peripherals::gpio;
+use core::sync::atomic::{AtomicU32, Ordering};
 
 pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
 
@@ -44,7 +44,7 @@ pub extern "C" fn rtc0_handler() {
 fn check_buttons_and_update_program() {
     let active_program = ACTIVE_PROGRAM.load(Ordering::Relaxed);
     let new_program = determine_program_from_buttons();
-    
+
     if active_program != new_program {
         ACTIVE_PROGRAM.store(new_program, Ordering::Relaxed);
         CANCELLATION_TOKEN_SOURCE.cancel();

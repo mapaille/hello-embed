@@ -1,8 +1,8 @@
-use crate::drivers::screen::frames::{letters, symbols};
 use crate::drivers::screen::frames::frame::Frame;
+use crate::drivers::screen::frames::{letters, symbols};
 
 pub struct Animation<const X: usize, const Y: usize, const SIZE: usize> {
-    pub frames: &'static[&'static Frame<X, Y>; SIZE],
+    pub frames: &'static [&'static Frame<X, Y>; SIZE],
 }
 
 pub const ANIMATION_LOVE: Animation<5, 5, 4> = Animation {
@@ -43,18 +43,18 @@ pub const ANIMATION_HEARTBEAT: Animation<5, 5, 4> = Animation {
             [true, false, false, false, true],
             [false, true, false, true, false],
             [false, false, true, false, false],
-        ])
+        ]),
     ],
 };
 
 pub const ANIMATION_LOADING: Animation<5, 5, 16> = Animation {
     frames: &[
         &Frame(&[
-           [true, false, false, false, false],
-           [false, false, false, false, false],
-           [false, false, false, false, false],
-           [false, false, false, false, false],
-           [false, false, false, false, false],
+            [true, false, false, false, false],
+            [false, false, false, false, false],
+            [false, false, false, false, false],
+            [false, false, false, false, false],
+            [false, false, false, false, false],
         ]),
         &Frame(&[
             [false, true, false, false, false],
