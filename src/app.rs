@@ -14,7 +14,23 @@ use core::sync::atomic::{AtomicU8, Ordering};
 pub static ACTIVE_PROGRAM: AtomicU8 = AtomicU8::new(ActiveProgram::Startup as u8);
 pub static CANCELLATION_TOKEN_SOURCE: CancellationTokenSource = CancellationTokenSource::new();
 
-pub fn run(components: &mut Components) -> ! {
+pub struct App {
+    pub components: Components,
+}
+
+impl App {
+    pub fn new() -> Self {
+        Self {
+            components: Components::new(),
+        }
+    }
+
+    pub fn run(&mut self) -> ! {
+        run(&mut self.components)
+    }
+}
+
+fn run(components: &mut Components) -> ! {
     components.screen.play_animation_for(
         &ANIMATION_LOADING,
         30,

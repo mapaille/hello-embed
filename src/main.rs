@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 
 mod app;
+mod app_builder;
 mod buttons;
 mod cancellation;
 mod clock;
@@ -11,7 +12,6 @@ mod interrupt;
 mod peripherals;
 mod power;
 mod programs;
-mod system;
 mod timing;
 mod traits;
 mod vector_table;
@@ -42,11 +42,9 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
-    system::init();
-
-    let mut components = Components::new();
-
-    app::run(&mut components);
+    let app_builder = app_builder::AppBuilder::new();
+    let mut app = app_builder.build();
+    app.run();
 }
 
 pub struct Components {
