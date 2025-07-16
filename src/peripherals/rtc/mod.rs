@@ -16,9 +16,12 @@ const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
 use crate::app::{ACTIVE_PROGRAM, ActiveProgram, CANCELLATION_TOKEN_SOURCE};
 use crate::peripherals::gpio;
+use crate::traits::Cancellable;
 use core::sync::atomic::{AtomicU32, Ordering};
 
 pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
+pub static BTN_A_PRESSED: AtomicU32 = AtomicU32::new(0);
+pub static BTN_B_PRESSED: AtomicU32 = AtomicU32::new(0);
 
 pub fn init() {
     unsafe {

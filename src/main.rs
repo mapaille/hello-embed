@@ -1,6 +1,9 @@
 #![no_std]
 #![no_main]
+#![allow(dead_code)]
+
 mod app;
+mod buttons;
 mod cancellation;
 mod clock;
 mod drivers;
@@ -10,6 +13,7 @@ mod power;
 mod programs;
 mod system;
 mod timing;
+mod traits;
 mod vector_table;
 
 use core::panic::PanicInfo;
@@ -38,11 +42,25 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
-    unsafe {
-        system::init();
+    system::init();
+
+    let mut components = Components::new();
+
+    app::run(&mut components);
+}
+
+pub struct Components {
+    screen: Screen<5, 5>,
+    left_button: buttons::LeftButton,
+    right_button: buttons::RightButton,
+}
+
+impl Components {
+    pub fn new() -> Self {
+        Self {
+            screen: Screen::init(SCREEN_ROW_PINS, SCREEN_COL_PINS),
+            left_button: buttons::LeftButton::new(),
+            right_button: buttons::RightButton::new(),
+        }
     }
-
-    let mut screen = Screen::init(SCREEN_ROW_PINS, SCREEN_COL_PINS);
-
-    app::run(&mut screen);
 }

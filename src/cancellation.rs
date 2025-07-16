@@ -1,3 +1,4 @@
+use crate::traits::{Cancellable, Resettable};
 use core::sync::atomic::{AtomicBool, Ordering};
 
 pub struct CancellationToken {
@@ -6,6 +7,18 @@ pub struct CancellationToken {
 
 pub struct CancellationTokenSource {
     pub token: CancellationToken,
+}
+
+impl Cancellable for CancellationTokenSource {
+    fn cancel(&self) {
+        self.token.cancelled.store(true, Ordering::Relaxed)
+    }
+}
+
+impl Resettable for CancellationTokenSource {
+    fn reset(&self) {
+        self.token.cancelled.store(false, Ordering::Relaxed)
+    }
 }
 
 impl CancellationToken {
@@ -24,11 +37,5 @@ impl CancellationTokenSource {
         CancellationTokenSource {
             token: CancellationToken::new(),
         }
-    }
-    pub fn cancel(&self) {
-        self.token.cancelled.store(true, Ordering::Relaxed)
-    }
-    pub fn reset(&self) {
-        self.token.cancelled.store(false, Ordering::Relaxed)
     }
 }

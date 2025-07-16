@@ -1,7 +1,7 @@
 use crate::peripherals::gpio;
 use crate::{clock, interrupt, peripherals::rtc, power};
 
-pub unsafe fn init() {
+pub fn init() {
     clock::use_high_frequency_clock();
     interrupt::enable_global_interrupts();
     rtc::init();
