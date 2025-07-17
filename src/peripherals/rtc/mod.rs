@@ -45,16 +45,16 @@ pub extern "C" fn rtc0_handler() {
 }
 
 fn check_buttons_and_update_program() {
-    let active_program = state::get_active_program();
-    let new_program = determine_program_from_buttons();
+    let program_id = state::get_program_id();
+    let new_program_id = determine_program_id_from_buttons();
 
-    if active_program != new_program {
-        state::set_active_program(new_program);
+    if program_id != new_program_id {
+        state::set_program_id(new_program_id);
         state::get_cancellation_token().cancel();
     }
 }
 
-fn determine_program_from_buttons() -> u8 {
+fn determine_program_id_from_buttons() -> u8 {
     if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
         state::STARTUP_PROGRAM_ID
     } else if gpio::p0::BTN_A.is_low() {
@@ -62,6 +62,6 @@ fn determine_program_from_buttons() -> u8 {
     } else if gpio::p0::BTN_B.is_low() {
         state::TEMP_PROGRAM_ID
     } else {
-        state::get_active_program()
+        state::get_program_id()
     }
 }

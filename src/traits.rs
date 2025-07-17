@@ -13,7 +13,7 @@ pub trait Pressable {
     fn is_pressed(&self) -> bool;
 }
 
-pub trait Screen<const X: usize, const Y: usize> {
+pub trait Displayable<const X: usize, const Y: usize> {
     fn refresh_once(&mut self, frame: &frames::frame::Frame<X, Y>);
     fn refresh_for(
         &mut self,

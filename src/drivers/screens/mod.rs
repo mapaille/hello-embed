@@ -5,7 +5,7 @@ use crate::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
-use crate::traits::Screen;
+use crate::traits::Displayable;
 
 pub struct EmbeddedScreen<const X: usize, const Y: usize> {
     width: usize,
@@ -35,7 +35,7 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
     }
 }
 
-impl Screen<5, 5> for EmbeddedScreen<5, 5> {
+impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     #[inline(always)]
     fn refresh_once(&mut self, frame: &frames::frame::Frame<5, 5>) {
         for (row_index, row_pin) in self.row_pins.iter().enumerate() {

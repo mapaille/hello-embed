@@ -1,20 +1,21 @@
+use crate::app::App;
 use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::peripherals::temp;
 use crate::programs::{CancellationToken, Program};
 use crate::timing::wait_ticks;
-use crate::traits::Screen;
+use crate::traits::Displayable;
 
 pub struct TempProgram;
 
 impl TempProgram {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self
     }
 }
 
 impl Program for TempProgram {
-    fn run(&mut self, screen: &mut EmbeddedScreen<5, 5>, cancellation_token: &CancellationToken) {
+    fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken) {
         if cancellation_token.is_cancelled() {
             return;
         }
@@ -30,9 +31,9 @@ impl Program for TempProgram {
         // Round to nearest whole number: add half the divisor (2) before dividing by 4
         let temperature = (temp::read_temp() + 2) / 4;
 
-        display_temperature(screen, temperature, cancellation_token);
+        display_temperature(&mut app.hardware.screen, temperature, cancellation_token);
         temp::clear();
-        screen.clear();
+        app.hardware.screen.clear();
         wait_ticks(500, cancellation_token);
     }
 }

@@ -5,19 +5,19 @@ pub const STARTUP_PROGRAM_ID: u8 = 1;
 pub const LOVE_PROGRAM_ID: u8 = 2;
 pub const TEMP_PROGRAM_ID: u8 = 3;
 
-static ACTIVE_PROGRAM: AtomicU8 = AtomicU8::new(STARTUP_PROGRAM_ID);
+static PROGRAM_ID: AtomicU8 = AtomicU8::new(STARTUP_PROGRAM_ID);
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
 
-pub fn set_active_program(program: u8) {
-    ACTIVE_PROGRAM.store(program, core::sync::atomic::Ordering::Relaxed)
+pub fn set_program_id(program_id: u8) {
+    PROGRAM_ID.store(program_id, core::sync::atomic::Ordering::Relaxed)
 }
 
-pub fn clear_active_program() {
-    ACTIVE_PROGRAM.store(0, core::sync::atomic::Ordering::Relaxed)
+pub fn clear_program_id() {
+    PROGRAM_ID.store(0, core::sync::atomic::Ordering::Relaxed)
 }
 
-pub fn get_active_program() -> u8 {
-    ACTIVE_PROGRAM.load(core::sync::atomic::Ordering::Relaxed)
+pub fn get_program_id() -> u8 {
+    PROGRAM_ID.load(core::sync::atomic::Ordering::Relaxed)
 }
 
 pub fn get_cancellation_token() -> &'static CancellationToken {
