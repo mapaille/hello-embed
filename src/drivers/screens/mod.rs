@@ -5,15 +5,23 @@ use crate::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
+use crate::traits::Screen;
 
-pub struct Screen<const X: usize, const Y: usize> {
-    pub row_pins: [GpioPin; Y],
-    pub col_pins: [GpioPin; X],
+pub struct EmbeddedScreen<const X: usize, const Y: usize> {
+    width: usize,
+    height: usize,
+    row_pins: [GpioPin; Y],
+    col_pins: [GpioPin; X],
 }
 
-impl<const X: usize, const Y: usize> Screen<X, Y> {
-    pub fn init(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
-        let screen = Screen { row_pins, col_pins };
+impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
+    pub fn new(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
+        let screen = EmbeddedScreen {
+            width: X,
+            height: Y,
+            row_pins,
+            col_pins,
+        };
 
         for pin in screen.row_pins.iter() {
             pin.as_output().set_low();
@@ -25,9 +33,11 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
 
         screen
     }
+}
 
+impl Screen<5, 5> for EmbeddedScreen<5, 5> {
     #[inline(always)]
-    pub fn refresh_once(&mut self, frame: &frames::frame::Frame<X, Y>) {
+    fn refresh_once(&mut self, frame: &frames::frame::Frame<5, 5>) {
         for (row_index, row_pin) in self.row_pins.iter().enumerate() {
             for (col_index, col_pin) in self.col_pins.iter().enumerate() {
                 if frame.0[row_index][col_index] {
@@ -44,9 +54,9 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
     }
 
     #[inline(always)]
-    pub fn refresh_for(
+    fn refresh_for(
         &mut self,
-        frame: &frames::frame::Frame<X, Y>,
+        frame: &frames::frame::Frame<5, 5>,
         ticks: u32,
         cancellation_token: &CancellationToken,
     ) {
@@ -59,9 +69,9 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         );
     }
 
-    pub fn play_animation_once<const SIZE: usize>(
+    fn play_animation_once<const SIZE: usize>(
         &mut self,
-        animation: &animations::Animation<X, Y, SIZE>,
+        animation: &animations::Animation<5, 5, SIZE>,
         fps: u32,
         cancellation_token: &CancellationToken,
     ) {
@@ -75,9 +85,9 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         }
     }
 
-    pub fn play_animation_for<const SIZE: usize>(
+    fn play_animation_for<const SIZE: usize>(
         &mut self,
-        animation: &animations::Animation<X, Y, SIZE>,
+        animation: &animations::Animation<5, 5, SIZE>,
         fps: u32,
         times: u32,
         cancellation_token: &CancellationToken,
@@ -90,7 +100,7 @@ impl<const X: usize, const Y: usize> Screen<X, Y> {
         }
     }
 
-    pub fn clear(&mut self) {
-        self.refresh_once(&frames::frame::Frame(&[[false; X]; Y]));
+    fn clear(&mut self) {
+        self.refresh_once(&frames::frame::Frame(&[[false; 5]; 5]));
     }
 }

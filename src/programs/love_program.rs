@@ -1,11 +1,18 @@
-use crate::drivers::screen::{Screen, animations};
+use crate::drivers::screens::{EmbeddedScreen, animations};
 use crate::programs::{CancellationToken, Program};
 use crate::timing::wait_ticks;
+use crate::traits::Screen;
 
 pub struct LoveProgram;
 
+impl LoveProgram {
+    pub fn new() -> Self {
+        LoveProgram
+    }
+}
+
 impl Program for LoveProgram {
-    fn run(&mut self, screen: &mut Screen<5, 5>, cancellation_token: &CancellationToken) {
+    fn run(&mut self, screen: &mut EmbeddedScreen<5, 5>, cancellation_token: &CancellationToken) {
         if cancellation_token.is_cancelled() {
             return;
         }

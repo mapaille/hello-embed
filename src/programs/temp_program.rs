@@ -1,13 +1,20 @@
-use crate::drivers::screen::{Screen, frames};
+use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::peripherals::temp;
 use crate::programs::{CancellationToken, Program};
 use crate::timing::wait_ticks;
+use crate::traits::Screen;
 
 pub struct TempProgram;
 
+impl TempProgram {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
 impl Program for TempProgram {
-    fn run(&mut self, screen: &mut Screen<5, 5>, cancellation_token: &CancellationToken) {
+    fn run(&mut self, screen: &mut EmbeddedScreen<5, 5>, cancellation_token: &CancellationToken) {
         if cancellation_token.is_cancelled() {
             return;
         }
@@ -31,7 +38,7 @@ impl Program for TempProgram {
 }
 
 fn display_temperature(
-    screen: &mut Screen<5, 5>,
+    screen: &mut EmbeddedScreen<5, 5>,
     temperature: u32,
     cancellation_token: &CancellationToken,
 ) {

@@ -1,68 +1,59 @@
 #![allow(dead_code)]
 
-use crate::Components;
-use crate::cancellation::CancellationTokenSource;
-use crate::drivers::screen::animations::ANIMATION_LOADING;
-use crate::interrupt::wfi;
+use crate::cancellation::CancellationToken;
+use crate::drivers::screens::animations::ANIMATION_LOADING;
+use crate::hardware::Hardware;
+use crate::interrupt;
 use crate::programs::Program;
 use crate::programs::love_program::LoveProgram;
 use crate::programs::startup_program::StartupProgram;
 use crate::programs::temp_program::TempProgram;
-use crate::traits::Resettable;
-use core::sync::atomic::{AtomicU8, Ordering};
-
-pub static ACTIVE_PROGRAM: AtomicU8 = AtomicU8::new(ActiveProgram::Startup as u8);
-pub static CANCELLATION_TOKEN_SOURCE: CancellationTokenSource = CancellationTokenSource::new();
+use crate::state;
+use crate::traits::{Resettable, Screen};
 
 pub struct App {
-    pub components: Components,
+    hardware: Hardware,
+    love_program: LoveProgram,
+    temp_program: TempProgram,
+    startup_program: StartupProgram,
 }
 
 impl App {
     pub fn new() -> Self {
         Self {
-            components: Components::new(),
+            hardware: Hardware::new(),
+            love_program: LoveProgram::new(),
+            temp_program: TempProgram::new(),
+            startup_program: StartupProgram::new(),
         }
     }
 
-    pub fn run(&mut self) -> ! {
-        run(&mut self.components)
-    }
-}
+    pub fn run(&mut self, cancellation_token: &CancellationToken) -> ! {
+        self.hardware
+            .screen
+            .play_animation_for(&ANIMATION_LOADING, 30, 2, cancellation_token);
 
-fn run(components: &mut Components) -> ! {
-    components.screen.play_animation_for(
-        &ANIMATION_LOADING,
-        30,
-        2,
-        &CANCELLATION_TOKEN_SOURCE.token,
-    );
+        loop {
+            cancellation_token.reset();
 
-    loop {
-        CANCELLATION_TOKEN_SOURCE.reset();
+            let active_program = state::get_active_program();
 
-        let active_program = ACTIVE_PROGRAM.load(Ordering::Relaxed);
+            let program: Option<&mut dyn Program> = match active_program {
+                1 => Some(&mut self.startup_program),
+                2 => Some(&mut self.love_program),
+                3 => Some(&mut self.temp_program),
+                _ => None,
+            };
 
-        if active_program == ActiveProgram::Love as u8 {
-            LoveProgram.run(&mut components.screen, &CANCELLATION_TOKEN_SOURCE.token);
-        } else if active_program == ActiveProgram::Temp as u8 {
-            TempProgram.run(&mut components.screen, &CANCELLATION_TOKEN_SOURCE.token);
-        } else if active_program == ActiveProgram::Startup as u8 {
-            StartupProgram.run(&mut components.screen, &CANCELLATION_TOKEN_SOURCE.token);
+            if let Some(program) = program {
+                program.run(&mut self.hardware.screen, cancellation_token);
+            }
+
+            if !cancellation_token.is_cancelled() {
+                state::clear_active_program();
+            }
+
+            interrupt::wfi()
         }
-
-        if CANCELLATION_TOKEN_SOURCE.token.is_cancelled() {
-            continue;
-        }
-
-        ACTIVE_PROGRAM.store(ActiveProgram::None as u8, Ordering::Relaxed);
-        wfi();
     }
-}
-
-pub enum ActiveProgram {
-    None = 0,
-    Startup = 1,
-    Love = 2,
-    Temp = 3,
 }

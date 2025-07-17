@@ -3,37 +3,22 @@
 #![allow(dead_code)]
 
 mod app;
-mod app_builder;
 mod buttons;
 mod cancellation;
 mod clock;
 mod drivers;
+mod hardware;
 mod interrupt;
 mod peripherals;
 mod power;
 mod programs;
+mod state;
+mod system;
 mod timing;
 mod traits;
 mod vector_table;
 
 use core::panic::PanicInfo;
-use drivers::screen::Screen;
-use peripherals::gpio;
-
-const SCREEN_ROW_PINS: [gpio::GpioPin; 5] = [
-    gpio::p0::ROW1,
-    gpio::p0::ROW2,
-    gpio::p0::ROW3,
-    gpio::p0::ROW4,
-    gpio::p0::ROW5,
-];
-const SCREEN_COL_PINS: [gpio::GpioPin; 5] = [
-    gpio::p0::COL1,
-    gpio::p0::COL2,
-    gpio::p0::COL3,
-    gpio::p1::COL4,
-    gpio::p0::COL5,
-];
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -42,23 +27,7 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
-    let app_builder = app_builder::AppBuilder::new();
-    let mut app = app_builder.build();
-    app.run();
-}
-
-pub struct Components {
-    screen: Screen<5, 5>,
-    left_button: buttons::LeftButton,
-    right_button: buttons::RightButton,
-}
-
-impl Components {
-    pub fn new() -> Self {
-        Self {
-            screen: Screen::init(SCREEN_ROW_PINS, SCREEN_COL_PINS),
-            left_button: buttons::LeftButton::new(),
-            right_button: buttons::RightButton::new(),
-        }
-    }
+    system::init();
+    let mut app = app::App::new();
+    app.run(state::get_cancellation_token())
 }

@@ -1,4 +1,4 @@
-use crate::drivers::screen::frames::frame::Frame;
+use crate::drivers::screens::frames::frame::Frame;
 
 pub const IMAGE_HEART: Frame<5, 5> = Frame(&[
     [false, true, false, true, false],

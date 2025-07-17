@@ -5,22 +5,6 @@ pub struct CancellationToken {
     cancelled: AtomicBool,
 }
 
-pub struct CancellationTokenSource {
-    pub token: CancellationToken,
-}
-
-impl Cancellable for CancellationTokenSource {
-    fn cancel(&self) {
-        self.token.cancelled.store(true, Ordering::Relaxed)
-    }
-}
-
-impl Resettable for CancellationTokenSource {
-    fn reset(&self) {
-        self.token.cancelled.store(false, Ordering::Relaxed)
-    }
-}
-
 impl CancellationToken {
     pub const fn new() -> Self {
         CancellationToken {
@@ -32,10 +16,14 @@ impl CancellationToken {
     }
 }
 
-impl CancellationTokenSource {
-    pub const fn new() -> CancellationTokenSource {
-        CancellationTokenSource {
-            token: CancellationToken::new(),
-        }
+impl Cancellable for CancellationToken {
+    fn cancel(&self) {
+        self.cancelled.store(true, Ordering::Relaxed)
+    }
+}
+
+impl Resettable for CancellationToken {
+    fn reset(&self) {
+        self.cancelled.store(false, Ordering::Relaxed)
     }
 }

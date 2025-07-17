@@ -1,4 +1,4 @@
-use crate::drivers::screen::frames::frame;
+use crate::drivers::screens::frames::frame;
 
 pub const SYMBOL_EQUAL: frame::Frame<5, 5> = frame::Frame(&[
     [false, false, false, false, false],
