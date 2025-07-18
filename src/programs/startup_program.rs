@@ -1,6 +1,6 @@
-use crate::app::App;
+use crate::app::{App, cancellation};
 use crate::drivers::screens::{EmbeddedScreen, animations};
-use crate::programs::{CancellationToken, Program};
+use crate::programs::RunnableProgram;
 use crate::traits::Displayable;
 
 pub struct StartupProgram;
@@ -11,8 +11,8 @@ impl StartupProgram {
     }
 }
 
-impl Program for StartupProgram {
-    fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken) {
+impl RunnableProgram for StartupProgram {
+    fn run(&mut self, app: &mut App, cancellation_token: &cancellation::CancellationToken) {
         while !cancellation_token.is_cancelled() {
             app.hardware.screen.play_animation_once(
                 &animations::ANIMATION_LOADING,

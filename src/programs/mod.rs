@@ -13,6 +13,6 @@ pub use love_program::LoveProgram;
 pub use startup_program::StartupProgram;
 pub use temp_program::TempProgram;
 
-pub trait Program {
+pub trait RunnableProgram {
     fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken);
 }

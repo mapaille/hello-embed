@@ -1,6 +1,6 @@
-use crate::app::App;
+use crate::app::{App, cancellation};
 use crate::drivers::screens::{EmbeddedScreen, animations};
-use crate::programs::{CancellationToken, Program};
+use crate::programs::RunnableProgram;
 use crate::timing::wait_ticks;
 use crate::traits::Displayable;
 
@@ -12,8 +12,8 @@ impl LoveProgram {
     }
 }
 
-impl Program for LoveProgram {
-    fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken) {
+impl RunnableProgram for LoveProgram {
+    fn run(&mut self, app: &mut App, cancellation_token: &cancellation::CancellationToken) {
         if cancellation_token.is_cancelled() {
             return;
         }
