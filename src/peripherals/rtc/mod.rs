@@ -14,8 +14,8 @@ const CC0: *mut u32 = (RTC0_BASE + 0x540) as *mut u32;
 const RTC0_IRQ_NUMBER: u32 = 11;
 const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
+use crate::app::state;
 use crate::peripherals::gpio;
-use crate::state;
 use crate::traits::Cancellable;
 use core::sync::atomic::{AtomicU32, Ordering};
 

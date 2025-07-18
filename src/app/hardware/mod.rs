@@ -1,4 +1,7 @@
-use crate::buttons;
+mod left_button;
+mod right_button;
+mod temp_sensor;
+
 use crate::drivers::screens;
 use crate::peripherals::gpio;
 
@@ -20,16 +23,18 @@ const SCREEN_COL_PINS: [gpio::GpioPin; 5] = [
 
 pub struct Hardware {
     pub screen: screens::EmbeddedScreen<5, 5>,
-    pub left_button: buttons::LeftButton,
-    pub right_button: buttons::RightButton,
+    pub left_button: left_button::LeftButton,
+    pub right_button: right_button::RightButton,
+    pub temp_sensor: temp_sensor::TempSensor,
 }
 
 impl Hardware {
     pub fn new() -> Self {
         Self {
             screen: screens::EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS),
-            left_button: buttons::LeftButton::new(),
-            right_button: buttons::RightButton::new(),
+            left_button: left_button::LeftButton::new(),
+            right_button: right_button::RightButton::new(),
+            temp_sensor: temp_sensor::TempSensor::new(),
         }
     }
 }

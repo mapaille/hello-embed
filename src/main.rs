@@ -3,21 +3,18 @@
 #![allow(dead_code)]
 
 mod app;
-mod buttons;
-mod cancellation;
 mod clock;
 mod drivers;
-mod hardware;
 mod interrupt;
 mod peripherals;
 mod power;
 mod programs;
-mod state;
 mod system;
 mod timing;
 mod traits;
 mod vector_table;
 
+use app::state;
 use core::panic::PanicInfo;
 
 #[panic_handler]

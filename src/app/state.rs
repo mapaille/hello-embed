@@ -1,4 +1,4 @@
-use crate::cancellation::CancellationToken;
+use crate::app::cancellation::CancellationToken;
 use core::sync::atomic::AtomicU8;
 
 pub const STARTUP_PROGRAM_ID: u8 = 1;

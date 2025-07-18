@@ -1,7 +1,7 @@
 pub mod animations;
 pub mod frames;
 
-use crate::cancellation::CancellationToken;
+use crate::app::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
