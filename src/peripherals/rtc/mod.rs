@@ -44,6 +44,7 @@ pub extern "C" fn rtc0_handler() {
     }
 }
 
+#[inline(always)]
 fn check_buttons_and_update_program() {
     let program_id = state::get_program_id();
     let new_program_id = determine_program_id_from_buttons();
@@ -54,6 +55,7 @@ fn check_buttons_and_update_program() {
     }
 }
 
+#[inline(always)]
 fn determine_program_id_from_buttons() -> u8 {
     if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
         state::STARTUP_PROGRAM_ID

@@ -5,6 +5,7 @@ use crate::interrupt::wfi;
 use crate::peripherals::rtc::RTC_TICKS;
 use core::sync::atomic::Ordering;
 
+#[inline(always)]
 pub fn wait_ticks(ticks: u32, cancellation_token: &CancellationToken) {
     let start = RTC_TICKS.load(Ordering::Relaxed);
     let target = start.wrapping_add(ticks);
@@ -18,6 +19,7 @@ pub fn wait_ticks(ticks: u32, cancellation_token: &CancellationToken) {
     }
 }
 
+#[inline(always)]
 pub fn repeat_for_ticks<F>(ticks: u32, mut action: F, cancellation_token: &CancellationToken)
 where
     F: FnMut(),
