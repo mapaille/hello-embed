@@ -1,4 +1,5 @@
-use crate::app::{App, cancellation};
+use crate::app::hardware::TemperatureSensor;
+use crate::app::{App, cancellation, hardware};
 use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::programs::RunnableProgram;
@@ -19,21 +20,24 @@ impl RunnableProgram for TempProgram {
             return;
         }
 
-        let sensor_temperature = app.hardware.temp_sensor.read();
+        let temperature = app.hardware.temp_sensor.read_temperature();
 
-        // Round to nearest whole number: add half the divisor (2) before dividing by 4
-        let temperature = (sensor_temperature + 2) / 4;
+        if let Some(temperature) = temperature {
+            if temperature < 100 {
+                let first_digit = frames::get_digit(temperature / 10).unwrap_or(&frames::DIGIT_0);
+                let second_digit = frames::get_digit(temperature % 10).unwrap_or(&frames::DIGIT_0);
 
-        if temperature < 100 {
-            let first_digit = frames::get_digit(temperature / 10).unwrap_or(&frames::DIGIT_0);
-            let second_digit = frames::get_digit(temperature % 10).unwrap_or(&frames::DIGIT_0);
-
+                app.hardware
+                    .screen
+                    .refresh_for(first_digit, 500, cancellation_token);
+                app.hardware
+                    .screen
+                    .refresh_for(second_digit, 500, cancellation_token);
+            }
+        } else {
             app.hardware
                 .screen
-                .refresh_for(first_digit, 500, cancellation_token);
-            app.hardware
-                .screen
-                .refresh_for(second_digit, 500, cancellation_token);
+                .refresh_for(&frames::LETTER_X, 500, cancellation_token);
         }
 
         app.hardware.screen.clear();

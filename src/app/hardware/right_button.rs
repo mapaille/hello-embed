@@ -1,5 +1,5 @@
-use crate::peripherals;
-use crate::traits;
+use crate::peripherals::gpio::p0::BTN_B;
+use crate::traits::Pressable;
 
 pub struct RightButton {}
 
@@ -9,8 +9,8 @@ impl RightButton {
     }
 }
 
-impl traits::Pressable for RightButton {
+impl Pressable for RightButton {
     fn is_pressed(&self) -> bool {
-        peripherals::gpio::p0::BTN_B.is_low()
+        BTN_B.is_low()
     }
 }

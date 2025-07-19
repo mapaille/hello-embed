@@ -15,3 +15,11 @@ pub const LETTER_M: frame::Frame<5, 5> = frame::Frame(&[
     [true, false, false, false, true],
     [true, false, false, false, true],
 ]);
+
+pub const LETTER_X: frame::Frame<5, 5> = frame::Frame(&[
+    [true, false, false, false, true],
+    [false, true, false, true, false],
+    [false, false, true, false, false],
+    [false, true, false, true, false],
+    [true, false, false, false, true],
+]);

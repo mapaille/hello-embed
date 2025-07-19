@@ -1,22 +1,42 @@
-use crate::{interrupt, peripherals};
+use crate::interrupt::wfi;
+use crate::peripherals::temp;
 
-pub struct TempSensor;
+pub struct TempSensor {
+    max_attempts: usize,
+}
+
+pub trait TemperatureSensor {
+    fn read_temperature(&self) -> Option<u32>;
+}
 
 impl TempSensor {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(max_attempts: usize) -> Self {
+        Self { max_attempts }
     }
+}
 
-    pub fn read(&self) -> u32 {
-        peripherals::temp::start();
+impl TemperatureSensor for TempSensor {
+    fn read_temperature(&self) -> Option<u32> {
+        temp::start();
 
-        while !peripherals::temp::is_ready() {
-            interrupt::wfi();
+        let mut attempts = 0;
+        while !temp::is_ready() {
+            if attempts >= self.max_attempts {
+                temp::stop();
+                temp::clear();
+                return None;
+            }
+            attempts += 1;
+            wfi();
         }
 
-        peripherals::temp::stop();
-        let value = peripherals::temp::read_temp();
-        peripherals::temp::clear();
-        value
+        temp::stop();
+        let value = temp::read();
+        temp::clear();
+
+        // Round to nearest whole number: add half the divisor (2) before dividing by 4
+        let temperature = (value + 2) / 4;
+
+        Some(temperature)
     }
 }
