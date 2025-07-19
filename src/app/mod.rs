@@ -34,7 +34,7 @@ impl App {
 
             let program_id = state::get_program_id();
 
-            let program: Option<&mut dyn programs::RunnableProgram> = match program_id {
+            let program: Option<&mut dyn programs::Program> = match program_id {
                 state::STARTUP_PROGRAM_ID => Some(&mut startup_program),
                 state::LOVE_PROGRAM_ID => Some(&mut love_program),
                 state::TEMP_PROGRAM_ID => Some(&mut temp_program),
