@@ -5,8 +5,13 @@ use crate::interrupt;
 use crate::programs::RunnableProgram;
 use crate::timing::wait_ticks;
 use crate::traits::Displayable;
+use core::char::MAX;
 
 pub struct TempProgram;
+
+const DISPLAY_DURATION_MS: u32 = 500;
+const MAX_DISPLAYABLE_TEMP: u32 = 100;
+const DIGIT_BASE: u32 = 10;
 
 impl TempProgram {
     pub const fn new() -> Self {
@@ -20,27 +25,52 @@ impl RunnableProgram for TempProgram {
             return;
         }
 
-        let temperature = app.hardware.temp_sensor.read_temperature();
-
-        if let Some(temperature) = temperature {
-            if temperature < 100 {
-                let first_digit = frames::get_digit(temperature / 10).unwrap_or(&frames::DIGIT_0);
-                let second_digit = frames::get_digit(temperature % 10).unwrap_or(&frames::DIGIT_0);
-
-                app.hardware
-                    .screen
-                    .refresh_for(first_digit, 500, cancellation_token);
-                app.hardware
-                    .screen
-                    .refresh_for(second_digit, 500, cancellation_token);
-            }
-        } else {
-            app.hardware
-                .screen
-                .refresh_for(&frames::LETTER_X, 500, cancellation_token);
+        if read_and_display_temperature(app, cancellation_token).is_none() {
+            app.hardware.screen.refresh_for(
+                &frames::LETTER_X,
+                DISPLAY_DURATION_MS,
+                cancellation_token,
+            );
         }
 
         app.hardware.screen.clear();
         wait_ticks(500, cancellation_token);
+    }
+}
+
+fn read_and_display_temperature(
+    app: &mut App,
+    cancellation_token: &cancellation::CancellationToken,
+) -> Option<()> {
+    let temperature = app.hardware.temp_sensor.read_temperature().unwrap();
+
+    if temperature >= MAX_DISPLAYABLE_TEMP {
+        return None;
+    }
+
+    display_temperature_digits(app, temperature, cancellation_token)?;
+    Some(())
+}
+
+fn display_temperature_digits(
+    app: &mut App,
+    temperature: u32,
+    cancellation_token: &cancellation::CancellationToken,
+) -> Option<()> {
+    if temperature < MAX_DISPLAYABLE_TEMP {
+        let first_digit = frames::get_digit(temperature / DIGIT_BASE).unwrap();
+        let second_digit = frames::get_digit(temperature % DIGIT_BASE).unwrap();
+
+        app.hardware
+            .screen
+            .refresh_for(first_digit, DISPLAY_DURATION_MS, cancellation_token);
+
+        app.hardware
+            .screen
+            .refresh_for(second_digit, DISPLAY_DURATION_MS, cancellation_token);
+
+        Some(())
+    } else {
+        None
     }
 }
