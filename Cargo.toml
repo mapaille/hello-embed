@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 
-# this lets you use `cargo fix`!
 [[bin]]
 name = "hello-embed"
 test = false

@@ -24,11 +24,13 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
         };
 
         for pin in screen.row_pins.iter() {
-            pin.as_output().set_low();
+            pin.as_output();
+            pin.set_low();
         }
 
         for pin in screen.col_pins.iter() {
-            pin.as_output().set_high();
+            pin.as_output();
+            pin.set_high();
         }
 
         screen

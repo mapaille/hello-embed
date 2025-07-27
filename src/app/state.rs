@@ -1,23 +1,17 @@
 use crate::app::cancellation::CancellationToken;
-use core::sync::atomic::AtomicU8;
+use crate::programs::ProgramId;
+use core::convert::Into;
+use core::sync::atomic::{AtomicU8, Ordering};
 
-pub const STARTUP_PROGRAM_ID: u8 = 1;
-pub const LOVE_PROGRAM_ID: u8 = 2;
-pub const TEMP_PROGRAM_ID: u8 = 3;
-
-static PROGRAM_ID: AtomicU8 = AtomicU8::new(STARTUP_PROGRAM_ID);
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
+static PROGRAM_ID: AtomicU8 = AtomicU8::new(ProgramId::Startup as u8);
 
-pub fn set_program_id(program_id: u8) {
-    PROGRAM_ID.store(program_id, core::sync::atomic::Ordering::Relaxed)
+pub fn set_program_id(program_id: ProgramId) {
+    PROGRAM_ID.store(program_id.into(), Ordering::Relaxed)
 }
 
-pub fn clear_program_id() {
-    PROGRAM_ID.store(0, core::sync::atomic::Ordering::Relaxed)
-}
-
-pub fn get_program_id() -> u8 {
-    PROGRAM_ID.load(core::sync::atomic::Ordering::Relaxed)
+pub fn get_program_id() -> ProgramId {
+    PROGRAM_ID.load(Ordering::Relaxed).into()
 }
 
 pub fn get_cancellation_token() -> &'static CancellationToken {

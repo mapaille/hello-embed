@@ -1,42 +1,41 @@
 #![allow(dead_code)]
 
-use core::ptr;
+use crate::peripherals::gpio::{Gpio, Register};
 
 // nRF52833 GPIO register offsets (divided by 4 for u32 indexing)
 pub const OUTSET: usize = 0x508 / 4;
 pub const OUTCLR: usize = 0x50C / 4;
 pub const DIRSET: usize = 0x518 / 4;
 pub const INPUT: usize = 0x510 / 4;
-
-const PIN_CNF_BASE: usize = 0x700 / 4;
+const PIN_CNF: usize = 0x700 / 4;
 const PIN_CNF_OUTPUT: u32 = 1 << 0; // DIR = output
 const PIN_CNF_INPUT_PULLUP: u32 = 3 << 2; // PULL = pull-up
 
 pub struct GpioPin {
-    base: ptr::NonNull<u32>,
+    gpio: &'static Gpio,
     offset: usize,
 }
 
 impl GpioPin {
-    pub const fn new(base: u32, offset: usize) -> Self {
-        Self {
-            base: unsafe { ptr::NonNull::new_unchecked(base as *mut u32) },
-            offset,
-        }
+    pub const fn new(gpio: &'static Gpio, offset: usize) -> Self {
+        Self { gpio, offset }
     }
 
-    pub fn as_output(&self) -> &GpioPin {
-        write(self.base, PIN_CNF_BASE + self.offset, PIN_CNF_OUTPUT);
-        self
+    fn reg_at(&self, offset: usize) -> Register<u32> {
+        unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset) as *mut u32) }
     }
 
-    pub fn as_input_pullup(&self) -> &GpioPin {
-        write(self.base, PIN_CNF_BASE + self.offset, PIN_CNF_INPUT_PULLUP);
-        self
+    pub fn as_output(&self) {
+        self.reg_at(PIN_CNF + self.offset).write(PIN_CNF_OUTPUT);
+    }
+
+    pub fn as_input_pullup(&self) {
+        self.reg_at(PIN_CNF + self.offset)
+            .write(PIN_CNF_INPUT_PULLUP);
     }
 
     pub fn is_low(&self) -> bool {
-        (read(self.base, INPUT) & (1 << self.offset)) == 0
+        (self.reg_at(INPUT).read() & (1 << self.offset)) == 0
     }
 
     pub fn is_high(&self) -> bool {
@@ -44,34 +43,18 @@ impl GpioPin {
     }
 
     pub fn set_high(&self) {
-        write(self.base, OUTSET, 1 << self.offset);
+        self.reg_at(OUTSET).write(1 << self.offset);
     }
 
     pub fn set_low(&self) {
-        write(self.base, OUTCLR, 1 << self.offset);
+        self.reg_at(OUTCLR).write(1 << self.offset);
     }
 
     pub fn toggle(&self) {
-        if self.is_set_high() {
+        if self.is_high() {
             self.set_low();
         } else {
             self.set_high();
         }
     }
-
-    pub fn is_set_high(&self) -> bool {
-        (read(self.base, INPUT) & (1 << self.offset)) != 0
-    }
-
-    pub fn is_set_low(&self) -> bool {
-        !self.is_set_high()
-    }
-}
-
-fn read(base: ptr::NonNull<u32>, offset: usize) -> u32 {
-    unsafe { ptr::read_volatile(base.as_ptr().add(offset)) }
-}
-
-fn write(base: ptr::NonNull<u32>, offset: usize, value: u32) {
-    unsafe { ptr::write_volatile(base.as_ptr().add(offset), value) }
 }

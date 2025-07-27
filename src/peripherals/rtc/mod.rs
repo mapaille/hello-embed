@@ -16,12 +16,11 @@ const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
 use crate::app::state;
 use crate::peripherals::gpio;
+use crate::programs::ProgramId;
 use crate::traits::Cancellable;
 use core::sync::atomic::{AtomicU32, Ordering};
 
 pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
-pub static BTN_A_PRESSED: AtomicU32 = AtomicU32::new(0);
-pub static BTN_B_PRESSED: AtomicU32 = AtomicU32::new(0);
 
 pub fn init() {
     unsafe {
@@ -56,13 +55,13 @@ fn check_buttons_and_update_program() {
 }
 
 #[inline(always)]
-fn determine_program_id_from_buttons() -> u8 {
+fn determine_program_id_from_buttons() -> ProgramId {
     if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
-        state::STARTUP_PROGRAM_ID
+        ProgramId::Startup
     } else if gpio::p0::BTN_A.is_low() {
-        state::LOVE_PROGRAM_ID
+        ProgramId::Love
     } else if gpio::p0::BTN_B.is_low() {
-        state::TEMP_PROGRAM_ID
+        ProgramId::Temp
     } else {
         state::get_program_id()
     }
