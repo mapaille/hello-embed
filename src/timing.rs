@@ -3,6 +3,7 @@
 use crate::app::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::rtc::RTC_TICKS;
+use crate::traits::Cancellable;
 use core::sync::atomic::Ordering;
 
 #[inline(always)]

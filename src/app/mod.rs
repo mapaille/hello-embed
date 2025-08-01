@@ -7,7 +7,7 @@ pub mod state;
 use crate::drivers::screens::animations::ANIMATION_LOADING;
 use crate::interrupt::wfi;
 use crate::programs::{LoveProgram, Program, ProgramId, StartupProgram, TempProgram};
-use crate::traits::{Displayable, Resettable};
+use crate::traits::{Cancellable, Displayable, Resettable};
 
 pub struct App {
     pub hardware: hardware::Hardware,

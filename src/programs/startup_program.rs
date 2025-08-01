@@ -1,7 +1,7 @@
 use crate::app::{App, cancellation};
 use crate::drivers::screens::{EmbeddedScreen, animations};
 use crate::programs::Program;
-use crate::traits::Displayable;
+use crate::traits::{Cancellable, Displayable};
 
 pub struct StartupProgram;
 

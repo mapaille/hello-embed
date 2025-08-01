@@ -11,14 +11,14 @@ impl CancellationToken {
             cancelled: AtomicBool::new(false),
         }
     }
-    pub fn is_cancelled(&self) -> bool {
-        self.cancelled.load(Ordering::Relaxed)
-    }
 }
 
 impl Cancellable for CancellationToken {
     fn cancel(&self) {
         self.cancelled.store(true, Ordering::Relaxed)
+    }
+    fn is_cancelled(&self) -> bool {
+        self.cancelled.load(Ordering::Relaxed)
     }
 }
 

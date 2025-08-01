@@ -4,7 +4,7 @@ use core::convert::Into;
 use core::sync::atomic::{AtomicU8, Ordering};
 
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
-static PROGRAM_ID: AtomicU8 = AtomicU8::new(ProgramId::Startup as u8);
+static PROGRAM_ID: AtomicU8 = AtomicU8::new(ProgramId::None as u8);
 
 pub fn set_program_id(program_id: ProgramId) {
     PROGRAM_ID.store(program_id.into(), Ordering::Relaxed)

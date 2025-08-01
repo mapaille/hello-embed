@@ -5,7 +5,7 @@ use crate::app::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
-use crate::traits::Displayable;
+use crate::traits::{Cancellable, Displayable};
 
 pub struct EmbeddedScreen<const X: usize, const Y: usize> {
     width: usize,

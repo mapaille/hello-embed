@@ -3,6 +3,7 @@ use crate::drivers::screens::{animations, frames};
 
 pub trait Cancellable {
     fn cancel(&self);
+    fn is_cancelled(&self) -> bool;
 }
 
 pub trait Resettable {
