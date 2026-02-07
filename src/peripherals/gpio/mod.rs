@@ -38,3 +38,8 @@ impl<T: Copy> Register<T> {
         unsafe { write_volatile(self.addr, value) }
     }
 }
+
+pub fn init() {
+    p0::BTN_A.as_input_pullup();
+    p0::BTN_B.as_input_pullup();
+}
