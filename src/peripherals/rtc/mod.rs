@@ -34,7 +34,6 @@ pub fn init() {
 }
 
 #[unsafe(no_mangle)]
-#[inline(always)]
 pub extern "C" fn rtc0_handler() {
     if unsafe { core::ptr::read_volatile(EVENTS_TICK) != 0 } {
         unsafe { core::ptr::write_volatile(EVENTS_TICK, 0) };
