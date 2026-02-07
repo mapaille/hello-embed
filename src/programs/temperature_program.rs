@@ -7,19 +7,19 @@ use crate::timing::wait_ticks;
 use crate::traits::{Cancellable, Displayable};
 use core::char::MAX;
 
-pub struct TempProgram;
+pub struct TemperatureProgram;
 
 const DISPLAY_DURATION_MS: u32 = 500;
 const MAX_DISPLAYABLE_TEMP: u32 = 100;
 const DIGIT_BASE: u32 = 10;
 
-impl TempProgram {
+impl TemperatureProgram {
     pub const fn new() -> Self {
         Self
     }
 }
 
-impl Program for TempProgram {
+impl Program for TemperatureProgram {
     fn run(&mut self, app: &mut App, cancellation_token: &cancellation::CancellationToken) {
         if cancellation_token.is_cancelled() {
             return;

@@ -60,7 +60,7 @@ fn determine_program_id_from_buttons() -> ProgramId {
     } else if gpio::p0::BTN_A.is_low() {
         ProgramId::Love
     } else if gpio::p0::BTN_B.is_low() {
-        ProgramId::Temp
+        ProgramId::Temperature
     } else {
         state::get_program_id()
     }

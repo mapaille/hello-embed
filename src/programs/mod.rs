@@ -8,15 +8,15 @@ use core::ops::Deref;
 
 pub mod love_program;
 pub mod startup_program;
-pub mod temp_program;
+pub mod temperature_program;
 
 pub use love_program::LoveProgram;
 pub use startup_program::StartupProgram;
-pub use temp_program::TempProgram;
+pub use temperature_program::TemperatureProgram;
 
 const STARTUP_PROGRAM: StartupProgram = StartupProgram::new();
 const LOVE_PROGRAM: LoveProgram = LoveProgram::new();
-const TEMP_PROGRAM: TempProgram = TempProgram::new();
+const TEMPERATURE_PROGRAM: TemperatureProgram = TemperatureProgram::new();
 
 pub trait Program {
     fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken);
@@ -28,7 +28,7 @@ pub enum ProgramId {
     None = 0,
     Startup = 1,
     Love = 2,
-    Temp = 3,
+    Temperature = 3,
 }
 
 impl From<ProgramId> for u8 {
@@ -43,7 +43,7 @@ impl From<u8> for ProgramId {
             0 => ProgramId::None,
             1 => ProgramId::Startup,
             2 => ProgramId::Love,
-            3 => ProgramId::Temp,
+            3 => ProgramId::Temperature,
             _ => panic!("Invalid program id"),
         }
     }
