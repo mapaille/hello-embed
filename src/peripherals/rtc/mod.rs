@@ -14,15 +14,15 @@ const CC0: *mut u32 = (RTC0_BASE + 0x540) as *mut u32;
 const RTC0_IRQ_NUMBER: u32 = 11;
 const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
-use crate::app::state;
-use crate::peripherals::gpio;
-use crate::programs::ProgramId;
-use crate::traits::Cancellable;
 use core::sync::atomic::{AtomicU32, Ordering};
 
 pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
 
-pub fn init() {
+static mut CALLBACK: fn() = empty_callback;
+
+fn empty_callback() {}
+
+pub fn init(callback: fn()) {
     unsafe {
         core::ptr::write_volatile(TASKS_STOP, 1);
         core::ptr::write_volatile(PRESCALER, 32);
@@ -30,6 +30,7 @@ pub fn init() {
         core::ptr::write_volatile(INTENSET, 1);
         core::ptr::write_volatile(NVIC_ISER0, 1 << RTC0_IRQ_NUMBER);
         core::ptr::write_volatile(TASKS_START, 1);
+        CALLBACK = callback;
     }
 }
 
@@ -38,30 +39,6 @@ pub extern "C" fn rtc0_handler() {
     if unsafe { core::ptr::read_volatile(EVENTS_TICK) != 0 } {
         unsafe { core::ptr::write_volatile(EVENTS_TICK, 0) };
         RTC_TICKS.fetch_add(1, Ordering::Relaxed);
-        check_buttons_and_update_program();
-    }
-}
-
-#[inline(always)]
-fn check_buttons_and_update_program() {
-    let program_id = state::get_program_id();
-    let new_program_id = determine_program_id_from_buttons();
-
-    if program_id != new_program_id {
-        state::set_program_id(new_program_id);
-        state::get_cancellation_token().cancel();
-    }
-}
-
-#[inline(always)]
-fn determine_program_id_from_buttons() -> ProgramId {
-    if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
-        ProgramId::Startup
-    } else if gpio::p0::BTN_A.is_low() {
-        ProgramId::Love
-    } else if gpio::p0::BTN_B.is_low() {
-        ProgramId::Temperature
-    } else {
-        state::get_program_id()
+        unsafe { CALLBACK() }
     }
 }
