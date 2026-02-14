@@ -14,9 +14,9 @@ mod timing;
 mod traits;
 mod vector_table;
 
+use crate::app::hardware;
 use app::state;
 use core::panic::PanicInfo;
-use crate::app::hardware;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {

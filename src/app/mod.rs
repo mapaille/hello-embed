@@ -15,9 +15,7 @@ pub struct App {
 
 impl App {
     pub fn new(hardware: hardware::Hardware) -> Self {
-        Self {
-            hardware,
-        }
+        Self { hardware }
     }
 
     pub fn run(&mut self, cancellation_token: &cancellation::CancellationToken) -> ! {

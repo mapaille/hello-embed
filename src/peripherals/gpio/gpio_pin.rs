@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
-use crate::peripherals::gpio::{Gpio, Register};
+use crate::peripherals::gpio::Gpio;
+use crate::peripherals::register::Register;
 
 // nRF52833 GPIO register offsets (divided by 4 for u32 indexing)
 pub const OUTSET: usize = 0x508 / 4;
@@ -8,8 +9,8 @@ pub const OUTCLR: usize = 0x50C / 4;
 pub const DIRSET: usize = 0x518 / 4;
 pub const INPUT: usize = 0x510 / 4;
 const PIN_CNF: usize = 0x700 / 4;
-const PIN_CNF_OUTPUT: u32 = 1 << 0; // DIR = output
-const PIN_CNF_INPUT_PULLUP: u32 = 3 << 2; // PULL = pull-up
+const PIN_CNF_OUTPUT: usize = 1 << 0; // DIR = output
+const PIN_CNF_INPUT_PULLUP: usize = 3 << 2; // PULL = pull-up
 
 pub struct GpioPin {
     gpio: &'static Gpio,
@@ -21,8 +22,8 @@ impl GpioPin {
         Self { gpio, offset }
     }
 
-    fn reg_at(&self, offset: usize) -> Register<u32> {
-        unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset) as *mut u32) }
+    fn reg_at(&self, offset: usize) -> Register<usize> {
+        unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset)) }
     }
 
     pub fn as_output(&self) {
