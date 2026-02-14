@@ -15,7 +15,7 @@ pub struct EmbeddedScreen<const X: usize, const Y: usize> {
 }
 
 impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
-    pub fn new(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
+    pub const fn new(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
         let screen = EmbeddedScreen {
             width: X,
             height: Y,
@@ -23,17 +23,19 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
             col_pins,
         };
 
-        for pin in screen.row_pins.iter() {
+        screen
+    }
+
+    pub fn init(&mut self) {
+        for pin in self.row_pins.iter() {
             pin.as_output();
             pin.set_low();
         }
 
-        for pin in screen.col_pins.iter() {
+        for pin in self.col_pins.iter() {
             pin.as_output();
             pin.set_high();
         }
-
-        screen
     }
 }
 

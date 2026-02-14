@@ -35,12 +35,16 @@ pub struct Hardware {
 }
 
 impl Hardware {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             screen: screens::EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS),
             left_button: left_button::LeftButton::new(),
             right_button: right_button::RightButton::new(),
             temp_sensor: temp_sensor::TempSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
         }
+    }
+
+    pub fn init(&mut self) {
+        self.screen.init();
     }
 }

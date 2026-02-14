@@ -16,6 +16,7 @@ mod vector_table;
 
 use app::state;
 use core::panic::PanicInfo;
+use crate::app::hardware;
 
 #[panic_handler]
 fn panic(_info: &PanicInfo) -> ! {
@@ -24,7 +25,9 @@ fn panic(_info: &PanicInfo) -> ! {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
+    let mut hardware = hardware::Hardware::new();
+    hardware.init();
     system::init();
-    let mut app = app::App::new();
+    let mut app = app::App::new(hardware);
     app.run(state::get_cancellation_token())
 }

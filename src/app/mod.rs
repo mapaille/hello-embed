@@ -14,9 +14,9 @@ pub struct App {
 }
 
 impl App {
-    pub fn new() -> Self {
+    pub fn new(hardware: hardware::Hardware) -> Self {
         Self {
-            hardware: hardware::Hardware::new(),
+            hardware,
         }
     }
 

@@ -4,7 +4,7 @@ use crate::traits::Pressable;
 pub struct RightButton {}
 
 impl RightButton {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         RightButton {}
     }
 }

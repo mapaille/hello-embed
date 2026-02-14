@@ -10,7 +10,7 @@ pub trait TemperatureSensor {
 }
 
 impl TempSensor {
-    pub fn new(max_attempts: usize) -> Self {
+    pub const fn new(max_attempts: usize) -> Self {
         Self { max_attempts }
     }
 }
