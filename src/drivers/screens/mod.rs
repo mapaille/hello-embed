@@ -25,18 +25,6 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
 
         screen
     }
-
-    pub fn init(&mut self) {
-        for pin in self.row_pins.iter() {
-            pin.as_output();
-            pin.set_low();
-        }
-
-        for pin in self.col_pins.iter() {
-            pin.as_output();
-            pin.set_high();
-        }
-    }
 }
 
 impl Displayable<5, 5> for EmbeddedScreen<5, 5> {

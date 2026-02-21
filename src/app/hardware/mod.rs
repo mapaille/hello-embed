@@ -40,8 +40,4 @@ impl Hardware {
             temp_sensor: temperature_sensor::TemperatureSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
         }
     }
-
-    pub fn init(&mut self) {
-        self.screen.init();
-    }
 }
