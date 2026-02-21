@@ -12,6 +12,7 @@ const PIN_CNF: usize = 0x700 / 4;
 const PIN_CNF_OUTPUT: usize = 1 << 0; // DIR = output
 const PIN_CNF_INPUT_PULLUP: usize = 3 << 2; // PULL = pull-up
 
+#[derive(Clone, Copy)]
 pub struct GpioPin {
     gpio: &'static Gpio,
     offset: usize,
@@ -50,12 +51,10 @@ impl GpioPin {
     pub fn set_low(&self) {
         self.reg_at(OUTCLR).write(1 << self.offset);
     }
-
-    pub fn toggle(&self) {
-        if self.is_high() {
-            self.set_low();
-        } else {
-            self.set_high();
-        }
-    }
 }
+
+unsafe impl Send for Register<usize> {}
+unsafe impl Sync for Register<usize> {}
+
+unsafe impl Send for GpioPin {}
+unsafe impl Sync for GpioPin {}
