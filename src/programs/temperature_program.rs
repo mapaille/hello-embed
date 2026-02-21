@@ -1,4 +1,3 @@
-use crate::app::hardware::TemperatureSensor;
 use crate::app::{App, cancellation, hardware};
 use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;

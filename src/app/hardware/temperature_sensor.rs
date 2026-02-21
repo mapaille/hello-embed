@@ -1,22 +1,16 @@
 use crate::interrupt::wfi;
 use crate::peripherals::temp;
 
-pub struct TempSensor {
+pub struct TemperatureSensor {
     max_attempts: usize,
 }
 
-pub trait TemperatureSensor {
-    fn read_temperature(&self) -> Option<u32>;
-}
-
-impl TempSensor {
+impl TemperatureSensor {
     pub const fn new(max_attempts: usize) -> Self {
         Self { max_attempts }
     }
-}
 
-impl TemperatureSensor for TempSensor {
-    fn read_temperature(&self) -> Option<u32> {
+    pub fn read_temperature(&self) -> Option<u32> {
         temp::start();
 
         let mut attempts = 0;

@@ -1,9 +1,7 @@
 #![allow(unused)]
 
 mod button;
-mod temp_sensor;
-
-pub use temp_sensor::TemperatureSensor;
+mod temperature_sensor;
 
 use crate::drivers::screens;
 use crate::peripherals::gpio;
@@ -30,7 +28,7 @@ pub struct Hardware {
     pub screen: screens::EmbeddedScreen<5, 5>,
     pub left_button: button::Button,
     pub right_button: button::Button,
-    pub temp_sensor: temp_sensor::TempSensor,
+    pub temp_sensor: temperature_sensor::TemperatureSensor,
 }
 
 impl Hardware {
@@ -39,7 +37,7 @@ impl Hardware {
             screen: screens::EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS),
             left_button: button::Button::new(gpio::p0::BTN_A),
             right_button: button::Button::new(gpio::p0::BTN_B),
-            temp_sensor: temp_sensor::TempSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
+            temp_sensor: temperature_sensor::TemperatureSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
         }
     }
 
