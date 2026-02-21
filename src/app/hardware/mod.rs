@@ -1,7 +1,6 @@
 #![allow(unused)]
 
-mod left_button;
-mod right_button;
+mod button;
 mod temp_sensor;
 
 pub use temp_sensor::TemperatureSensor;
@@ -29,8 +28,8 @@ const TEMP_SENSOR_MAX_ATTEMPTS: usize = 10;
 
 pub struct Hardware {
     pub screen: screens::EmbeddedScreen<5, 5>,
-    pub left_button: left_button::LeftButton,
-    pub right_button: right_button::RightButton,
+    pub left_button: button::Button,
+    pub right_button: button::Button,
     pub temp_sensor: temp_sensor::TempSensor,
 }
 
@@ -38,8 +37,8 @@ impl Hardware {
     pub const fn new() -> Self {
         Self {
             screen: screens::EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS),
-            left_button: left_button::LeftButton::new(),
-            right_button: right_button::RightButton::new(),
+            left_button: button::Button::new(gpio::p0::BTN_A),
+            right_button: button::Button::new(gpio::p0::BTN_B),
             temp_sensor: temp_sensor::TempSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
         }
     }
