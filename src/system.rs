@@ -1,14 +1,17 @@
 use crate::app::state;
 use crate::peripherals::{gpio, rtc};
 use crate::programs::ProgramId;
-use crate::traits::Cancellable;
+use crate::traits::{Cancellable, Pressable};
 use crate::{clock, interrupt, power};
+use crate::app::hardware::Hardware;
+
+const HARDWARE: Hardware = Hardware::new();
 
 pub fn init() {
     clock::use_high_frequency_clock();
-    interrupt::enable_global_interrupts();
-    rtc::init(rtc_callback);
     gpio::init();
+    rtc::init(rtc_callback);
+    interrupt::enable_global_interrupts();
     power::enable_low_power();
     clock::use_low_frequency_clock();
 }
@@ -26,11 +29,11 @@ fn rtc_callback() {
 
 #[inline(always)]
 fn determine_program_id_from_buttons() -> ProgramId {
-    if gpio::p0::BTN_A.is_low() && gpio::p0::BTN_B.is_low() {
+    if HARDWARE.left_button.is_pressed() && HARDWARE.right_button.is_pressed() {
         ProgramId::Startup
-    } else if gpio::p0::BTN_A.is_low() {
+    } else if HARDWARE.left_button.is_pressed() {
         ProgramId::Love
-    } else if gpio::p0::BTN_B.is_low() {
+    } else if HARDWARE.right_button.is_pressed() {
         ProgramId::Temperature
     } else {
         state::get_program_id()
