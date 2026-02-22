@@ -23,31 +23,45 @@ impl GpioPin {
         Self { gpio, offset }
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     const fn reg_at(&self, offset: usize) -> Register<usize> {
         unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset)) }
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn as_output(&self) {
         self.reg_at(PIN_CNF + self.offset).write(PIN_CNF_OUTPUT);
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn as_input_pullup(&self) {
         self.reg_at(PIN_CNF + self.offset)
             .write(PIN_CNF_INPUT_PULLUP);
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn is_low(&self) -> bool {
         (self.reg_at(INPUT).read() & (1 << self.offset)) == 0
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn is_high(&self) -> bool {
         !self.is_low()
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn set_high(&self) {
         self.reg_at(OUTSET).write(1 << self.offset);
     }
 
+    #[allow(clippy::inline_always)]
+    #[inline(always)]
     pub fn set_low(&self) {
         self.reg_at(OUTCLR).write(1 << self.offset);
     }

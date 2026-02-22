@@ -2,7 +2,7 @@ use crate::peripherals::gpio::GpioPin;
 use crate::traits::Pressable;
 
 pub struct FaceTouch {
-    gpio_pin: GpioPin
+    gpio_pin: GpioPin,
 }
 
 impl FaceTouch {

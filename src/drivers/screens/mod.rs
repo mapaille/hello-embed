@@ -26,6 +26,7 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
 }
 
 impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
+    #[inline]
     fn refresh_once(&mut self, frame: &frames::frame::Frame<5, 5>) {
         for (row_index, row_pin) in self.row_pins.iter().enumerate() {
             for (col_index, col_pin) in self.col_pins.iter().enumerate() {

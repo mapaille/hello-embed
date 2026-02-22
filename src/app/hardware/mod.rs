@@ -1,8 +1,8 @@
 #![allow(unused)]
 
 mod button;
-mod temperature_sensor;
 mod face_touch;
+mod temperature_sensor;
 
 use crate::app::hardware::button::Button;
 use crate::app::hardware::face_touch::FaceTouch;
