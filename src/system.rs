@@ -33,6 +33,8 @@ fn determine_program_id_from_buttons() -> ProgramId {
         ProgramId::Love
     } else if HARDWARE.right_button.is_pressed() {
         ProgramId::Temperature
+    } else if HARDWARE.touch_button.is_pressed() {
+        ProgramId::Startup
     } else {
         state::get_program_id()
     }
