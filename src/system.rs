@@ -16,6 +16,7 @@ pub fn init() {
     clock::use_low_frequency_clock();
 }
 
+#[inline]
 fn rtc_callback() {
     let program_id = state::get_program_id();
     let new_program_id = determine_program_id_from_buttons();
@@ -26,6 +27,7 @@ fn rtc_callback() {
     }
 }
 
+#[inline]
 fn determine_program_id_from_buttons() -> ProgramId {
     if HARDWARE.left_button.is_pressed() && HARDWARE.right_button.is_pressed() {
         ProgramId::Startup

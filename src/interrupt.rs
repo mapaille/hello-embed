@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
-#[allow(clippy::inline_always)]
-#[inline(always)]
+#[inline]
 pub fn wfi() {
     unsafe {
         core::arch::asm!("wfi", options(nomem, nostack, preserves_flags));
