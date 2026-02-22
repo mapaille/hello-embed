@@ -5,7 +5,7 @@ use crate::app::cancellation::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::gpio::GpioPin;
 use crate::timing::repeat_for_ticks;
-use crate::traits::{Cancellable, Displayable};
+use crate::traits::{Cancellable, Clearable, Displayable};
 
 pub struct EmbeddedScreen<const X: usize, const Y: usize> {
     width: usize,
@@ -87,7 +87,9 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
             self.play_animation_once(animation, fps, cancellation_token);
         }
     }
+}
 
+impl Clearable for EmbeddedScreen<5, 5> {
     fn clear(&mut self) {
         self.refresh_once(&frames::frame::Frame(&[[false; 5]; 5]));
     }

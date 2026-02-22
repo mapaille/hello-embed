@@ -15,7 +15,7 @@ mod traits;
 mod vector_table;
 
 use crate::app::hardware;
-use crate::traits::Displayable;
+use crate::traits::Clearable;
 use app::state;
 use core::panic::PanicInfo;
 

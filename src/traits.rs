@@ -14,6 +14,10 @@ pub trait Pressable {
     fn is_pressed(&self) -> bool;
 }
 
+pub trait Clearable {
+    fn clear(&mut self);
+}
+
 pub trait Displayable<const X: usize, const Y: usize> {
     fn refresh_once(&mut self, frame: &frames::frame::Frame<X, Y>);
     fn refresh_for(
@@ -35,5 +39,4 @@ pub trait Displayable<const X: usize, const Y: usize> {
         times: u32,
         cancellation_token: &CancellationToken,
     );
-    fn clear(&mut self);
 }

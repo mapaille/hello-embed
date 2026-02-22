@@ -3,7 +3,7 @@ use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::programs::Program;
 use crate::timing::wait_ticks;
-use crate::traits::{Cancellable, Displayable};
+use crate::traits::{Cancellable, Clearable, Displayable};
 use core::char::MAX;
 
 pub struct TemperatureProgram;
