@@ -5,14 +5,17 @@ pub struct Register<T> {
 }
 
 impl<T: Copy> Register<T> {
+    #[inline]
     pub const fn new(addr: *mut T) -> Self {
         Self { addr }
     }
 
+    #[inline]
     pub fn read(&self) -> T {
         unsafe { read_volatile(self.addr) }
     }
 
+    #[inline]
     pub fn write(&self, value: T) {
         unsafe { write_volatile(self.addr, value) }
     }
