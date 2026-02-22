@@ -13,7 +13,7 @@ pub use images::*;
 pub use letters::*;
 pub use symbols::*;
 
-pub fn get_digit(digit: u32) -> Option<&'static Frame<5, 5>> {
+pub const fn get_digit(digit: u32) -> Option<&'static Frame<5, 5>> {
     match digit {
         0 => Some(&DIGIT_0),
         1 => Some(&DIGIT_1),
@@ -29,7 +29,7 @@ pub fn get_digit(digit: u32) -> Option<&'static Frame<5, 5>> {
     }
 }
 
-pub fn get_letter(ch: char) -> Option<&'static Frame<5, 5>> {
+pub const fn get_letter(ch: char) -> Option<&'static Frame<5, 5>> {
     match ch.to_ascii_uppercase() {
         'E' => Some(&LETTER_E),
         'M' => Some(&LETTER_M),
@@ -37,7 +37,7 @@ pub fn get_letter(ch: char) -> Option<&'static Frame<5, 5>> {
     }
 }
 
-pub fn get_symbol(ch: char) -> Option<&'static Frame<5, 5>> {
+pub const fn get_symbol(ch: char) -> Option<&'static Frame<5, 5>> {
     match ch {
         '+' => Some(&SYMBOL_PLUS),
         '=' => Some(&SYMBOL_EQUAL),

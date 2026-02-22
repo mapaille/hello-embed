@@ -6,12 +6,16 @@ use crate::peripherals::rtc::RTC_TICKS;
 use crate::traits::Cancellable;
 use core::sync::atomic::Ordering;
 
-#[inline(always)]
 pub fn wait_ticks(ticks: u32, cancellation_token: &CancellationToken) {
     let start = RTC_TICKS.load(Ordering::Relaxed);
     let target = start.wrapping_add(ticks);
 
-    while (RTC_TICKS.load(Ordering::Relaxed).wrapping_sub(target) as i32) < 0 {
+    while (RTC_TICKS
+        .load(Ordering::Relaxed)
+        .wrapping_sub(target)
+        .cast_signed())
+        < 0
+    {
         if cancellation_token.is_cancelled() {
             return;
         }
@@ -20,7 +24,6 @@ pub fn wait_ticks(ticks: u32, cancellation_token: &CancellationToken) {
     }
 }
 
-#[inline(always)]
 pub fn repeat_for_ticks<F>(ticks: u32, mut action: F, cancellation_token: &CancellationToken)
 where
     F: FnMut(),
@@ -28,7 +31,12 @@ where
     let start = RTC_TICKS.load(Ordering::Relaxed);
     let target = start.wrapping_add(ticks);
 
-    while (RTC_TICKS.load(Ordering::Relaxed).wrapping_sub(target) as i32) < 0 {
+    while (RTC_TICKS
+        .load(Ordering::Relaxed)
+        .wrapping_sub(target)
+        .cast_signed())
+        < 0
+    {
         if cancellation_token.is_cancelled() {
             return;
         }

@@ -16,19 +16,16 @@ pub struct EmbeddedScreen<const X: usize, const Y: usize> {
 
 impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
     pub const fn new(row_pins: [GpioPin; Y], col_pins: [GpioPin; X]) -> Self {
-        let screen = EmbeddedScreen {
+        Self {
             width: X,
             height: Y,
             row_pins,
             col_pins,
-        };
-
-        screen
+        }
     }
 }
 
 impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
-    #[inline(always)]
     fn refresh_once(&mut self, frame: &frames::frame::Frame<5, 5>) {
         for (row_index, row_pin) in self.row_pins.iter().enumerate() {
             for (col_index, col_pin) in self.col_pins.iter().enumerate() {
@@ -45,7 +42,6 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
         }
     }
 
-    #[inline(always)]
     fn refresh_for(
         &mut self,
         frame: &frames::frame::Frame<5, 5>,
@@ -69,7 +65,7 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     ) {
         let frame_duration = 1000 / fps;
 
-        for frame in animation.frames.iter() {
+        for frame in animation.frames {
             if cancellation_token.is_cancelled() {
                 return;
             }
@@ -88,7 +84,7 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
             if cancellation_token.is_cancelled() {
                 return;
             }
-            self.play_animation_once(animation, fps, cancellation_token)
+            self.play_animation_once(animation, fps, cancellation_token);
         }
     }
 

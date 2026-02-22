@@ -3,10 +3,18 @@
 mod button;
 mod temperature_sensor;
 
+use crate::app::hardware::button::Button;
+use crate::app::hardware::temperature_sensor::TemperatureSensor;
 use crate::drivers::screens;
+use crate::drivers::screens::EmbeddedScreen;
 use crate::peripherals::gpio;
+use crate::peripherals::gpio::GpioPin;
 
-const SCREEN_ROW_PINS: [gpio::GpioPin; 5] = [
+const TEMPERATURE_SENSOR_MAX_ATTEMPS: usize = 10;
+const LEFT_BUTTON_PIN: GpioPin = gpio::p0::BTN_A;
+const RIGHT_BUTTON_PIN: GpioPin = gpio::p0::BTN_B;
+
+const SCREEN_ROW_PINS: [GpioPin; 5] = [
     gpio::p0::ROW1,
     gpio::p0::ROW2,
     gpio::p0::ROW3,
@@ -14,7 +22,7 @@ const SCREEN_ROW_PINS: [gpio::GpioPin; 5] = [
     gpio::p0::ROW5,
 ];
 
-const SCREEN_COL_PINS: [gpio::GpioPin; 5] = [
+const SCREEN_COL_PINS: [GpioPin; 5] = [
     gpio::p0::COL1,
     gpio::p0::COL2,
     gpio::p0::COL3,
@@ -22,22 +30,26 @@ const SCREEN_COL_PINS: [gpio::GpioPin; 5] = [
     gpio::p0::COL5,
 ];
 
-const TEMP_SENSOR_MAX_ATTEMPTS: usize = 10;
+const LEFT_BUTTON: Button = Button::new(LEFT_BUTTON_PIN);
+const RIGHT_BUTTON: Button = Button::new(RIGHT_BUTTON_PIN);
+const TEMPERATURE_SENSOR: TemperatureSensor =
+    TemperatureSensor::new(TEMPERATURE_SENSOR_MAX_ATTEMPS);
+const SCREEN: EmbeddedScreen<5, 5> = EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS);
 
 pub struct Hardware {
-    pub screen: screens::EmbeddedScreen<5, 5>,
-    pub left_button: button::Button,
-    pub right_button: button::Button,
-    pub temp_sensor: temperature_sensor::TemperatureSensor,
+    pub screen: EmbeddedScreen<5, 5>,
+    pub left_button: Button,
+    pub right_button: Button,
+    pub temperature_sensor: TemperatureSensor,
 }
 
 impl Hardware {
     pub const fn new() -> Self {
         Self {
-            screen: screens::EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS),
-            left_button: button::Button::new(gpio::p0::BTN_A),
-            right_button: button::Button::new(gpio::p0::BTN_B),
-            temp_sensor: temperature_sensor::TemperatureSensor::new(TEMP_SENSOR_MAX_ATTEMPTS),
+            screen: SCREEN,
+            left_button: LEFT_BUTTON,
+            right_button: RIGHT_BUTTON,
+            temperature_sensor: TEMPERATURE_SENSOR,
         }
     }
 }

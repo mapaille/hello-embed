@@ -1,9 +1,9 @@
+use crate::app::hardware::Hardware;
 use crate::app::state;
 use crate::peripherals::{gpio, rtc};
 use crate::programs::ProgramId;
 use crate::traits::{Cancellable, Pressable};
 use crate::{clock, interrupt, power};
-use crate::app::hardware::Hardware;
 
 const HARDWARE: Hardware = Hardware::new();
 
@@ -16,7 +16,6 @@ pub fn init() {
     clock::use_low_frequency_clock();
 }
 
-#[inline(always)]
 fn rtc_callback() {
     let program_id = state::get_program_id();
     let new_program_id = determine_program_id_from_buttons();
@@ -27,7 +26,6 @@ fn rtc_callback() {
     }
 }
 
-#[inline(always)]
 fn determine_program_id_from_buttons() -> ProgramId {
     if HARDWARE.left_button.is_pressed() && HARDWARE.right_button.is_pressed() {
         ProgramId::Startup

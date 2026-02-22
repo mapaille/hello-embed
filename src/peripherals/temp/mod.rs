@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 const BASE_ADDRESS: u32 = 0x4000_C000;
-const TASKS_START: *mut u32 = (BASE_ADDRESS + 0x000) as *mut u32;
+const TASKS_START: *mut u32 = (BASE_ADDRESS) as *mut u32;
 const TASKS_STOP: *mut u32 = (BASE_ADDRESS + 0x004) as *mut u32;
 const EVENTS_DATARDY: *mut u32 = (BASE_ADDRESS + 0x100) as *mut u32;
 const INTENSET: *mut u32 = (BASE_ADDRESS + 0x304) as *mut u32;
@@ -27,6 +27,6 @@ pub fn is_ready() -> bool {
 pub fn clear() {
     unsafe {
         core::ptr::write_volatile(TEMP, 0);
-        core::ptr::write_volatile(EVENTS_DATARDY, 0)
+        core::ptr::write_volatile(EVENTS_DATARDY, 0);
     }
 }

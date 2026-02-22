@@ -7,7 +7,7 @@ pub struct CancellationToken {
 
 impl CancellationToken {
     pub const fn new() -> Self {
-        CancellationToken {
+        Self {
             cancelled: AtomicBool::new(false),
         }
     }
@@ -15,7 +15,7 @@ impl CancellationToken {
 
 impl Cancellable for CancellationToken {
     fn cancel(&self) {
-        self.cancelled.store(true, Ordering::Relaxed)
+        self.cancelled.store(true, Ordering::Relaxed);
     }
     fn is_cancelled(&self) -> bool {
         self.cancelled.load(Ordering::Relaxed)
@@ -24,6 +24,6 @@ impl Cancellable for CancellationToken {
 
 impl Resettable for CancellationToken {
     fn reset(&self) {
-        self.cancelled.store(false, Ordering::Relaxed)
+        self.cancelled.store(false, Ordering::Relaxed);
     }
 }

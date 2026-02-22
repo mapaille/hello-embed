@@ -15,15 +15,18 @@ mod traits;
 mod vector_table;
 
 use crate::app::hardware;
+use crate::traits::Displayable;
 use app::state;
 use core::panic::PanicInfo;
-use crate::traits::Displayable;
 
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+const fn panic(_info: &PanicInfo) -> ! {
     loop {}
 }
 
+/// # Safety
+///
+/// This is the entry point of the program. It is called by the reset vector
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
     system::init();

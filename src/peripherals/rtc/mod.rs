@@ -2,7 +2,7 @@
 
 pub const RTC0_BASE: u32 = 0x4000_B000;
 
-const TASKS_START: *mut u32 = (RTC0_BASE + 0x000) as *mut u32;
+const TASKS_START: *mut u32 = (RTC0_BASE) as *mut u32;
 const TASKS_STOP: *mut u32 = (RTC0_BASE + 0x004) as *mut u32;
 const TASKS_CLEAR: *mut u32 = (RTC0_BASE + 0x008) as *mut u32;
 const EVENTS_TICK: *mut u32 = (RTC0_BASE + 0x100) as *mut u32;
@@ -20,7 +20,7 @@ pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
 
 static mut CALLBACK: fn() = empty_callback;
 
-fn empty_callback() {}
+const fn empty_callback() {}
 
 pub fn init(callback: fn()) {
     unsafe {

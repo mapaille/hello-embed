@@ -41,7 +41,7 @@ fn read_and_display_temperature(
     app: &mut App,
     cancellation_token: &cancellation::CancellationToken,
 ) -> Option<()> {
-    let temperature = app.hardware.temp_sensor.read_temperature().unwrap();
+    let temperature = app.hardware.temperature_sensor.read_temperature().unwrap();
 
     if temperature >= MAX_DISPLAYABLE_TEMP {
         return None;

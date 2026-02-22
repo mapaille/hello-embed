@@ -23,7 +23,7 @@ impl GpioPin {
         Self { gpio, offset }
     }
 
-    fn reg_at(&self, offset: usize) -> Register<usize> {
+    const fn reg_at(&self, offset: usize) -> Register<usize> {
         unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset)) }
     }
 

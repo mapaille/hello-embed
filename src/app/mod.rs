@@ -14,7 +14,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(hardware: hardware::Hardware) -> Self {
+    pub const fn new(hardware: hardware::Hardware) -> Self {
         Self { hardware }
     }
 
@@ -36,7 +36,7 @@ impl App {
                 ProgramId::Startup => Some(&mut startup_program),
                 ProgramId::Love => Some(&mut love_program),
                 ProgramId::Temperature => Some(&mut temperature_program),
-                _ => None,
+                ProgramId::None => None,
             };
 
             if let Some(program) = program {
@@ -47,7 +47,7 @@ impl App {
                 state::set_program_id(ProgramId::None);
             }
 
-            wfi()
+            wfi();
         }
     }
 }

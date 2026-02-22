@@ -7,7 +7,7 @@ pub struct Button {
 
 impl Button {
     pub const fn new(pin: GpioPin) -> Self {
-        Button { pin }
+        Self { pin }
     }
 }
 

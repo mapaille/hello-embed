@@ -7,7 +7,7 @@ pub struct StartupProgram;
 
 impl StartupProgram {
     pub const fn new() -> Self {
-        StartupProgram
+        Self
     }
 }
 

@@ -8,7 +8,7 @@ pub struct LoveProgram;
 
 impl LoveProgram {
     pub const fn new() -> Self {
-        LoveProgram
+        Self
     }
 }
 

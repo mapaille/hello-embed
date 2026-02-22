@@ -33,18 +33,17 @@ pub enum ProgramId {
 
 impl From<ProgramId> for u8 {
     fn from(id: ProgramId) -> Self {
-        id as u8
+        id as Self
     }
 }
 
 impl From<u8> for ProgramId {
     fn from(id: u8) -> Self {
         match id {
-            0 => ProgramId::None,
-            1 => ProgramId::Startup,
-            2 => ProgramId::Love,
-            3 => ProgramId::Temperature,
-            _ => panic!("Invalid program id"),
+            1 => Self::Startup,
+            2 => Self::Love,
+            3 => Self::Temperature,
+            _ => Self::None,
         }
     }
 }

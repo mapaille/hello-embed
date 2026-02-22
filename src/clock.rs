@@ -1,12 +1,12 @@
 #![allow(dead_code)]
 
-pub const BASE_ADDRESS: u32 = 0x40000000;
+pub const BASE_ADDRESS: u32 = 0x_4000_0000;
 
 // Clock registers
 const CLOCK_HFCLKSTAT: *const u32 = (BASE_ADDRESS + 0x40C) as *const u32;
 const CLOCK_LFCLKSTAT: *const u32 = (BASE_ADDRESS + 0x418) as *const u32;
 const CLOCK_HFCLKRUN: *mut u32 = (BASE_ADDRESS + 0x408) as *mut u32;
-const CLOCK_HFCLKSTART: *mut u32 = (BASE_ADDRESS + 0x000) as *mut u32;
+const CLOCK_HFCLKSTART: *mut u32 = (BASE_ADDRESS) as *mut u32;
 const CLOCK_HFCLKSTOP: *mut u32 = (BASE_ADDRESS + 0x004) as *mut u32;
 const CLOCK_LFCLKSTART: *mut u32 = (BASE_ADDRESS + 0x008) as *mut u32;
 const CLOCK_LFCLKSTOP: *mut u32 = (BASE_ADDRESS + 0x00C) as *mut u32;
