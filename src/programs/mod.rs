@@ -2,7 +2,6 @@
 #![allow(unused_imports)]
 
 use crate::app::App;
-use crate::app::cancellation::CancellationToken;
 use crate::drivers::screens::EmbeddedScreen;
 use core::ops::Deref;
 

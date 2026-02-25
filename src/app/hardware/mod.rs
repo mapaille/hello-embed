@@ -7,7 +7,6 @@ mod temperature_sensor;
 use crate::app::hardware::button::Button;
 use crate::app::hardware::face_touch::FaceTouch;
 use crate::app::hardware::temperature_sensor::TemperatureSensor;
-use crate::drivers::screens;
 use crate::drivers::screens::EmbeddedScreen;
 use crate::peripherals::gpio;
 use crate::peripherals::gpio::GpioPin;

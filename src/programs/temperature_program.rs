@@ -1,4 +1,4 @@
-use crate::app::{App, cancellation, hardware};
+use crate::app::App;
 use crate::drivers::screens::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::programs::Program;
@@ -37,9 +37,7 @@ impl Program for TemperatureProgram {
     }
 }
 
-fn read_and_display_temperature(
-    app: &App,
-) -> Option<()> {
+fn read_and_display_temperature(app: &App) -> Option<()> {
     let temperature = app.hardware.temperature_sensor.read_temperature().unwrap();
 
     if temperature >= MAX_DISPLAYABLE_TEMP {
@@ -50,10 +48,7 @@ fn read_and_display_temperature(
     Some(())
 }
 
-fn display_temperature_digits(
-    app: &App,
-    temperature: u32,
-) -> Option<()> {
+fn display_temperature_digits(app: &App, temperature: u32) -> Option<()> {
     if temperature < MAX_DISPLAYABLE_TEMP {
         let first_digit = frames::get_digit(temperature / DIGIT_BASE).unwrap();
         let second_digit = frames::get_digit(temperature % DIGIT_BASE).unwrap();

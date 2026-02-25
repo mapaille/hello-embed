@@ -1,4 +1,4 @@
-use crate::app::RtcHandler;
+use crate::app::rtc_handler::RtcHandler;
 use crate::peripherals::{gpio, rtc};
 use crate::{clock, interrupt, power};
 

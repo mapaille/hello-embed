@@ -1,4 +1,4 @@
-use crate::app::{App, cancellation};
+use crate::app::App;
 use crate::drivers::screens::{EmbeddedScreen, animations};
 use crate::programs::Program;
 use crate::timing::wait_ticks;
