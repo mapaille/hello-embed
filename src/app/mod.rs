@@ -42,8 +42,6 @@ impl App {
             .play_animation_for(&ANIMATION_LOADING, 30, 2, self.cancellation_token);
 
         loop {
-            self.cancellation_token.reset();
-
             let program_id = self.selected_program_id.get();
 
             let program: Option<&dyn Program> = match program_id {
@@ -61,6 +59,8 @@ impl App {
                 self.selected_program_id.set(ProgramId::None);
             }
 
+            self.cancellation_token.reset();
+            
             wfi();
         }
     }
