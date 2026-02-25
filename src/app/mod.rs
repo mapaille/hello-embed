@@ -60,7 +60,6 @@ impl App {
             }
 
             self.cancellation_token.reset();
-            
             wfi();
         }
     }
