@@ -27,7 +27,7 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
 
 impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     #[inline]
-    fn refresh_once(&mut self, frame: &frames::frame::Frame<5, 5>) {
+    fn refresh_once(&self, frame: &frames::frame::Frame<5, 5>) {
         for (row_index, row_pin) in self.row_pins.iter().enumerate() {
             for (col_index, col_pin) in self.col_pins.iter().enumerate() {
                 if frame.0[row_index][col_index] {
@@ -44,9 +44,9 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     }
 
     fn refresh_for(
-        &mut self,
+        &self,
         frame: &frames::frame::Frame<5, 5>,
-        ticks: u32,
+        ticks: usize,
         cancellation_token: &CancellationToken,
     ) {
         repeat_for_ticks(
@@ -59,9 +59,9 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     }
 
     fn play_animation_once<const SIZE: usize>(
-        &mut self,
+        &self,
         animation: &animations::Animation<5, 5, SIZE>,
-        fps: u32,
+        fps: usize,
         cancellation_token: &CancellationToken,
     ) {
         let frame_duration = 1000 / fps;
@@ -75,10 +75,10 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
     }
 
     fn play_animation_for<const SIZE: usize>(
-        &mut self,
+        &self,
         animation: &animations::Animation<5, 5, SIZE>,
-        fps: u32,
-        times: u32,
+        fps: usize,
+        times: usize,
         cancellation_token: &CancellationToken,
     ) {
         for _ in 0..times {
@@ -91,7 +91,7 @@ impl Displayable<5, 5> for EmbeddedScreen<5, 5> {
 }
 
 impl Clearable for EmbeddedScreen<5, 5> {
-    fn clear(&mut self) {
+    fn clear(&self) {
         self.refresh_once(&frames::frame::Frame(&[[false; 5]; 5]));
     }
 }

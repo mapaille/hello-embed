@@ -19,7 +19,7 @@ const LOVE_PROGRAM: LoveProgram = LoveProgram::new();
 const TEMPERATURE_PROGRAM: TemperatureProgram = TemperatureProgram::new();
 
 pub trait Program {
-    fn run(&mut self, app: &mut App, cancellation_token: &CancellationToken);
+    fn run(&self, app: &App);
 }
 
 #[repr(u8)]

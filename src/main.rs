@@ -14,9 +14,7 @@ mod timing;
 mod traits;
 mod vector_table;
 
-use crate::app::hardware;
-use crate::traits::Clearable;
-use app::state;
+use crate::app::App;
 use core::panic::PanicInfo;
 
 #[panic_handler]
@@ -30,10 +28,6 @@ const fn panic(_info: &PanicInfo) -> ! {
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
     system::init();
-
-    let mut hardware = hardware::Hardware::new();
-    hardware.screen.clear();
-
-    let mut app = app::App::new(hardware);
-    app.run(state::get_cancellation_token())
+    let app = App::new();
+    app.run();
 }

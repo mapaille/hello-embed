@@ -14,9 +14,9 @@ const CC0: *mut u32 = (RTC0_BASE + 0x540) as *mut u32;
 const RTC0_IRQ_NUMBER: u32 = 11;
 const NVIC_ISER0: *mut u32 = 0xE000_E100 as *mut u32;
 
-use core::sync::atomic::{AtomicU32, Ordering};
+use core::sync::atomic::{AtomicUsize, Ordering};
 
-pub static RTC_TICKS: AtomicU32 = AtomicU32::new(0);
+pub static RTC_TICKS: AtomicUsize = AtomicUsize::new(0);
 
 static mut CALLBACK: fn() = empty_callback;
 

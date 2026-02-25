@@ -12,12 +12,12 @@ impl StartupProgram {
 }
 
 impl Program for StartupProgram {
-    fn run(&mut self, app: &mut App, cancellation_token: &cancellation::CancellationToken) {
-        while !cancellation_token.is_cancelled() {
+    fn run(&self, app: &App) {
+        while !app.cancellation_token.is_cancelled() {
             app.hardware.screen.play_animation_once(
                 &animations::ANIMATION_LOADING,
                 30,
-                cancellation_token,
+                app.cancellation_token,
             );
         }
     }

@@ -15,28 +15,28 @@ pub trait Pressable {
 }
 
 pub trait Clearable {
-    fn clear(&mut self);
+    fn clear(&self);
 }
 
 pub trait Displayable<const X: usize, const Y: usize> {
-    fn refresh_once(&mut self, frame: &frames::frame::Frame<X, Y>);
+    fn refresh_once(&self, frame: &frames::frame::Frame<X, Y>);
     fn refresh_for(
-        &mut self,
+        &self,
         frame: &frames::frame::Frame<X, Y>,
-        ticks: u32,
+        ticks: usize,
         cancellation_token: &CancellationToken,
     );
     fn play_animation_once<const SIZE: usize>(
-        &mut self,
+        &self,
         animation: &animations::Animation<X, Y, SIZE>,
-        fps: u32,
+        fps: usize,
         cancellation_token: &CancellationToken,
     );
     fn play_animation_for<const SIZE: usize>(
-        &mut self,
+        &self,
         animation: &animations::Animation<X, Y, SIZE>,
-        fps: u32,
-        times: u32,
+        fps: usize,
+        times: usize,
         cancellation_token: &CancellationToken,
     );
 }
