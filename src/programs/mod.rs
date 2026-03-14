@@ -22,7 +22,7 @@ pub trait Program {
 }
 
 #[repr(u8)]
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum ProgramId {
     None = 0,
     Startup = 1,

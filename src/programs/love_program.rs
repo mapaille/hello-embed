@@ -14,23 +14,21 @@ impl LoveProgram {
 
 impl Program for LoveProgram {
     fn run(&self, app: &App) {
-        if app.cancellation_token.is_cancelled() {
-            return;
+        while !app.cancellation_token.is_cancelled() {
+            app.hardware.screen.play_animation_once(
+                &animations::ANIMATION_LOVE,
+                2,
+                app.cancellation_token,
+            );
+
+            app.hardware.screen.play_animation_for(
+                &animations::ANIMATION_HEARTBEAT,
+                5,
+                3,
+                app.cancellation_token,
+            );
+
+            wait_ticks(10000, app.cancellation_token);
         }
-
-        app.hardware.screen.play_animation_once(
-            &animations::ANIMATION_LOVE,
-            2,
-            app.cancellation_token,
-        );
-
-        app.hardware.screen.play_animation_for(
-            &animations::ANIMATION_HEARTBEAT,
-            5,
-            3,
-            app.cancellation_token,
-        );
-
-        wait_ticks(500, app.cancellation_token);
     }
 }

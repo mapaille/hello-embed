@@ -8,7 +8,7 @@ use core::char::MAX;
 
 pub struct TemperatureProgram;
 
-const DISPLAY_DURATION_MS: usize = 500;
+const DISPLAY_DURATION_MS: usize = 1000;
 const MAX_DISPLAYABLE_TEMP: u32 = 100;
 const DIGIT_BASE: u32 = 10;
 
@@ -20,20 +20,18 @@ impl TemperatureProgram {
 
 impl Program for TemperatureProgram {
     fn run(&self, app: &App) {
-        if app.cancellation_token.is_cancelled() {
-            return;
-        }
+        while !app.cancellation_token.is_cancelled() {
+            if read_and_display_temperature(app).is_none() {
+                app.hardware.screen.refresh_for(
+                    &frames::LETTER_X,
+                    DISPLAY_DURATION_MS,
+                    app.cancellation_token,
+                );
+            }
 
-        if read_and_display_temperature(app).is_none() {
-            app.hardware.screen.refresh_for(
-                &frames::LETTER_X,
-                DISPLAY_DURATION_MS,
-                app.cancellation_token,
-            );
+            app.hardware.screen.clear();
+            wait_ticks(10000, app.cancellation_token);
         }
-
-        app.hardware.screen.clear();
-        wait_ticks(500, app.cancellation_token);
     }
 }
 
