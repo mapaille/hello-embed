@@ -6,12 +6,6 @@ use crate::traits::{Cancellable, Displayable};
 
 pub struct LoveProgram;
 
-impl LoveProgram {
-    pub const fn new() -> Self {
-        Self
-    }
-}
-
 impl Program for LoveProgram {
     fn run(&self, app: &App) {
         while !app.cancellation_token.is_cancelled() {

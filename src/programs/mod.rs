@@ -5,44 +5,39 @@ use crate::app::App;
 use crate::drivers::screens::EmbeddedScreen;
 use core::ops::Deref;
 
+mod empty_program;
 pub mod love_program;
 pub mod startup_program;
 pub mod temperature_program;
+mod x_program;
 
+use crate::programs::empty_program::EmptyProgram;
+use crate::programs::x_program::XProgram;
 pub use love_program::LoveProgram;
 pub use startup_program::StartupProgram;
 pub use temperature_program::TemperatureProgram;
 
-const STARTUP_PROGRAM: StartupProgram = StartupProgram::new();
-const LOVE_PROGRAM: LoveProgram = LoveProgram::new();
-const TEMPERATURE_PROGRAM: TemperatureProgram = TemperatureProgram::new();
+const NUMBER_OF_PROGRAMS: usize = 5;
+const EMPTY_PROGRAM: EmptyProgram = EmptyProgram;
+const STARTUP_PROGRAM: StartupProgram = StartupProgram;
+const LOVE_PROGRAM: LoveProgram = LoveProgram;
+const TEMPERATURE_PROGRAM: TemperatureProgram = TemperatureProgram;
+const X_PROGRAM: XProgram = XProgram;
+
+pub const fn get_programs() -> [&'static dyn Program; NUMBER_OF_PROGRAMS] {
+    [
+        &EMPTY_PROGRAM,
+        &STARTUP_PROGRAM,
+        &LOVE_PROGRAM,
+        &TEMPERATURE_PROGRAM,
+        &X_PROGRAM,
+    ]
+}
+
+pub const fn get_number_of_programs() -> usize {
+    NUMBER_OF_PROGRAMS
+}
 
 pub trait Program {
     fn run(&self, app: &App);
-}
-
-#[repr(u8)]
-#[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum ProgramId {
-    None = 0,
-    Startup = 1,
-    Love = 2,
-    Temperature = 3,
-}
-
-impl From<ProgramId> for u8 {
-    fn from(id: ProgramId) -> Self {
-        id as Self
-    }
-}
-
-impl From<u8> for ProgramId {
-    fn from(id: u8) -> Self {
-        match id {
-            1 => Self::Startup,
-            2 => Self::Love,
-            3 => Self::Temperature,
-            _ => Self::None,
-        }
-    }
 }

@@ -12,12 +12,6 @@ const DISPLAY_DURATION_MS: usize = 1000;
 const MAX_DISPLAYABLE_TEMP: u32 = 100;
 const DIGIT_BASE: u32 = 10;
 
-impl TemperatureProgram {
-    pub const fn new() -> Self {
-        Self
-    }
-}
-
 impl Program for TemperatureProgram {
     fn run(&self, app: &App) {
         while !app.cancellation_token.is_cancelled() {

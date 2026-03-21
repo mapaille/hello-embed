@@ -3,24 +3,21 @@
 pub mod cancellation;
 pub mod hardware;
 pub mod rtc_handler;
-pub mod selected_program_id;
 
 use crate::app::cancellation::CancellationToken;
 use crate::app::hardware::Hardware;
-use crate::app::selected_program_id::SelectedProgramId;
-use crate::drivers::screens::animations::ANIMATION_LOADING;
 use crate::interrupt::wfi;
-use crate::programs::{LoveProgram, Program, ProgramId, StartupProgram, TemperatureProgram};
-use crate::traits::{Cancellable, Displayable, Resettable};
+use crate::traits::{Cancellable, Resettable};
+use core::sync::atomic::{AtomicUsize, Ordering};
 
 static HARDWARE: Hardware = Hardware::new();
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
-static SELECTED_PROGRAM_ID: SelectedProgramId = SelectedProgramId::new();
+static SELECTED_PROGRAM_INDEX: AtomicUsize = AtomicUsize::new(0);
 
 pub struct App {
     pub hardware: &'static Hardware,
     pub cancellation_token: &'static CancellationToken,
-    pub selected_program_id: &'static SelectedProgramId,
+    pub selected_program_index: &'static AtomicUsize,
 }
 
 impl App {
@@ -28,35 +25,22 @@ impl App {
         Self {
             hardware: &HARDWARE,
             cancellation_token: &CANCELLATION_TOKEN,
-            selected_program_id: &SELECTED_PROGRAM_ID,
+            selected_program_index: &SELECTED_PROGRAM_INDEX,
         }
     }
 
     pub fn run(&self) -> ! {
-        let startup_program = StartupProgram::new();
-        let love_program = LoveProgram::new();
-        let temperature_program = TemperatureProgram::new();
-
-        self.hardware
-            .screen
-            .play_animation_for(&ANIMATION_LOADING, 30, 2, self.cancellation_token);
+        let programs = crate::programs::get_programs();
 
         loop {
-            let program_id = self.selected_program_id.get();
-
-            let program: Option<&dyn Program> = match program_id {
-                ProgramId::Startup => Some(&startup_program),
-                ProgramId::Love => Some(&love_program),
-                ProgramId::Temperature => Some(&temperature_program),
-                ProgramId::None => None,
-            };
-
-            if let Some(program) = program {
-                program.run(self);
-            }
+            programs.iter().enumerate().for_each(|(i, program)| {
+                if i == self.selected_program_index.load(Ordering::Relaxed) {
+                    program.run(self);
+                }
+            });
 
             if !self.cancellation_token.is_cancelled() {
-                self.selected_program_id.set(ProgramId::None);
+                self.selected_program_index.store(0, Ordering::Relaxed);
             }
 
             self.cancellation_token.reset();

@@ -5,12 +5,6 @@ use crate::traits::{Cancellable, Displayable};
 
 pub struct StartupProgram;
 
-impl StartupProgram {
-    pub const fn new() -> Self {
-        Self
-    }
-}
-
 impl Program for StartupProgram {
     fn run(&self, app: &App) {
         while !app.cancellation_token.is_cancelled() {
