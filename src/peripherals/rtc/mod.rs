@@ -25,7 +25,7 @@ const fn empty_callback() {}
 pub fn init(callback: fn()) {
     unsafe {
         core::ptr::write_volatile(TASKS_STOP, 1);
-        core::ptr::write_volatile(PRESCALER, 32);
+        core::ptr::write_volatile(PRESCALER, 31);
         core::ptr::write_volatile(TASKS_CLEAR, 1);
         core::ptr::write_volatile(INTENSET, 1);
         core::ptr::write_volatile(NVIC_ISER0, 1 << RTC0_IRQ_NUMBER);
