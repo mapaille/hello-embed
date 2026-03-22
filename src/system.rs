@@ -2,7 +2,7 @@ use crate::app::rtc_handler::RtcHandler;
 use crate::peripherals::{gpio, rtc};
 use crate::{clock, interrupt, power};
 
-static RTC_HANDLER: RtcHandler = RtcHandler::new();
+const RTC_HANDLER: RtcHandler = RtcHandler::new();
 
 pub fn init() {
     clock::use_high_frequency_clock();

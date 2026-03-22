@@ -4,10 +4,10 @@ use crate::app::{CANCELLATION_TOKEN, HARDWARE, SELECTED_PROGRAM_INDEX};
 use crate::traits::{Cancellable, Pressable};
 use core::sync::atomic::{AtomicUsize, Ordering};
 
-const BUTTON_PRESSED_DELAY_MS: usize = 50;
-static LEFT_AND_RIGHT_BUTTON_PRESSED: AtomicUsize = AtomicUsize::new(0);
-static LEFT_BUTTON_PRESSED_COUNTER: AtomicUsize = AtomicUsize::new(0);
-static RIGHT_BUTTON_PRESSED_COUNTER: AtomicUsize = AtomicUsize::new(0);
+const PRESS_DEBOUNCE_TICKS: usize = 50;
+
+static LEFT_PRESS_COUNTER: AtomicUsize = AtomicUsize::new(0);
+static RIGHT_PRESS_COUNTER: AtomicUsize = AtomicUsize::new(0);
 
 pub struct RtcHandler {
     hardware: &'static Hardware,
@@ -25,51 +25,36 @@ impl RtcHandler {
     }
 
     pub fn on_rtc(&self) {
-        let program_index = self.selected_program_index.load(Ordering::Relaxed);
-        let new_program_index = self.determine_program_index_from_buttons();
+        let mut new_index = self.selected_program_index.load(Ordering::Acquire);
 
-        if program_index != new_program_index {
+        if self.hardware.left_button.is_pressed() {
+            let prev = LEFT_PRESS_COUNTER.fetch_add(1, Ordering::Relaxed);
+
+            if prev == PRESS_DEBOUNCE_TICKS - 1 {
+                new_index = get_previous_program_index(
+                    new_index,
+                    crate::programs::get_number_of_programs(),
+                );
+            }
+        } else {
+            LEFT_PRESS_COUNTER.store(0, Ordering::Relaxed);
+        }
+
+        if self.hardware.right_button.is_pressed() {
+            let prev = RIGHT_PRESS_COUNTER.fetch_add(1, Ordering::Relaxed);
+
+            if prev == PRESS_DEBOUNCE_TICKS - 1 {
+                new_index =
+                    get_next_program_index(new_index, crate::programs::get_number_of_programs());
+            }
+        } else {
+            RIGHT_PRESS_COUNTER.store(0, Ordering::Relaxed);
+        }
+
+        if new_index != self.selected_program_index.load(Ordering::Relaxed) {
             self.selected_program_index
-                .store(new_program_index, Ordering::Relaxed);
+                .store(new_index, Ordering::Release);
             self.cancellation_token.cancel();
-        }
-    }
-
-    fn determine_program_index_from_buttons(&self) -> usize {
-        let left_button_pressed = self.hardware.left_button.is_pressed();
-        let right_button_pressed = self.hardware.right_button.is_pressed();
-
-        if left_button_pressed && right_button_pressed {
-            LEFT_AND_RIGHT_BUTTON_PRESSED.fetch_add(1, Ordering::Relaxed);
-            LEFT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-            RIGHT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-        } else if left_button_pressed {
-            LEFT_AND_RIGHT_BUTTON_PRESSED.store(0, Ordering::Relaxed);
-            LEFT_BUTTON_PRESSED_COUNTER.fetch_add(1, Ordering::Relaxed);
-            RIGHT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-        } else if right_button_pressed {
-            LEFT_AND_RIGHT_BUTTON_PRESSED.store(0, Ordering::Relaxed);
-            LEFT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-            RIGHT_BUTTON_PRESSED_COUNTER.fetch_add(1, Ordering::Relaxed);
-        } else {
-            LEFT_AND_RIGHT_BUTTON_PRESSED.store(0, Ordering::Relaxed);
-            LEFT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-            RIGHT_BUTTON_PRESSED_COUNTER.store(0, Ordering::Relaxed);
-        }
-
-        let left_button_pressed_for_long_enough =
-            LEFT_BUTTON_PRESSED_COUNTER.load(Ordering::Relaxed) == BUTTON_PRESSED_DELAY_MS;
-        let right_button_pressed_for_long_enough =
-            RIGHT_BUTTON_PRESSED_COUNTER.load(Ordering::Relaxed) == BUTTON_PRESSED_DELAY_MS;
-        let selected_program_index = self.selected_program_index.load(Ordering::Relaxed);
-        let number_of_programs = crate::programs::get_number_of_programs();
-
-        if left_button_pressed_for_long_enough {
-            get_previous_program_index(selected_program_index, number_of_programs)
-        } else if right_button_pressed_for_long_enough {
-            get_next_program_index(selected_program_index, number_of_programs)
-        } else {
-            selected_program_index
         }
     }
 }
