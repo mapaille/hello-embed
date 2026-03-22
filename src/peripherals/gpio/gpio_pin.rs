@@ -1,68 +1,86 @@
 #![allow(dead_code)]
 
 use crate::peripherals::gpio::Gpio;
-use crate::peripherals::register::Register;
 
 // nRF52833 GPIO register offsets (divided by 4 for u32 indexing)
-pub const OUTSET: usize = 0x508 / 4;
-pub const OUTCLR: usize = 0x50C / 4;
-pub const DIRSET: usize = 0x518 / 4;
-pub const INPUT: usize = 0x510 / 4;
-const PIN_CNF: usize = 0x700 / 4;
-const PIN_CNF_OUTPUT: usize = 1 << 0; // DIR = output
-const PIN_CNF_INPUT_PULLUP: usize = 3 << 2; // PULL = pull-up
+const CNF_OUTPUT_STD: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0001; // DIR=1, DRIVE=S0S1=0, rest default
+const CNF_INPUT_PULLUP_STD: u32 = 0b0000_0000_0000_0000_0000_1100_0000_0000; // PULL=3, DIR=0, DRIVE=0
 
 #[derive(Clone, Copy)]
 pub struct GpioPin {
-    gpio: &'static Gpio,
-    offset: usize,
+    port: &'static Gpio,
+    pin: u8,
 }
 
 impl GpioPin {
     #[inline]
-    pub const fn new(gpio: &'static Gpio, offset: usize) -> Self {
-        Self { gpio, offset }
+    pub const fn new(port: &'static Gpio, pin: u8) -> Self {
+        Self { port, pin }
     }
 
     #[inline]
-    const fn reg_at(&self, offset: usize) -> Register<usize> {
-        unsafe { Register::new(self.gpio.base_addr.as_ptr().add(offset)) }
+    const fn pin_mask(&self) -> u32 {
+        1u32 << self.pin
+    }
+
+    pub fn configure_output(&self) {
+        unsafe {
+            self.port.pin_cnf(self.pin).write_volatile(CNF_OUTPUT_STD);
+        }
     }
 
     #[inline]
-    pub fn as_output(&self) {
-        self.reg_at(PIN_CNF + self.offset).write(PIN_CNF_OUTPUT);
-    }
-
-    #[inline]
-    pub fn as_input_pullup(&self) {
-        self.reg_at(PIN_CNF + self.offset)
-            .write(PIN_CNF_INPUT_PULLUP);
-    }
-
-    #[inline]
-    pub fn is_low(&self) -> bool {
-        (self.reg_at(INPUT).read() & (1 << self.offset)) == 0
+    pub fn configure_input_pullup(&self) {
+        unsafe {
+            self.port
+                .pin_cnf(self.pin)
+                .write_volatile(CNF_INPUT_PULLUP_STD);
+        }
     }
 
     #[inline]
     pub fn is_high(&self) -> bool {
-        !self.is_low()
+        (unsafe { self.port.input().read_volatile() } & self.pin_mask()) != 0
+    }
+
+    #[inline]
+    pub fn is_low(&self) -> bool {
+        !self.is_high()
     }
 
     #[inline]
     pub fn set_high(&self) {
-        self.reg_at(OUTSET).write(1 << self.offset);
+        unsafe {
+            self.port.outset().write_volatile(self.pin_mask());
+        }
     }
 
     #[inline]
     pub fn set_low(&self) {
-        self.reg_at(OUTCLR).write(1 << self.offset);
+        unsafe {
+            self.port.outclr().write_volatile(self.pin_mask());
+        }
+    }
+
+    #[inline]
+    pub fn set(&self, state: bool) {
+        if state {
+            self.set_high();
+        } else {
+            self.set_low();
+        }
+    }
+
+    #[inline]
+    pub fn toggle(&self) {
+        // This pattern usually compiles to better code than read-modify-write
+        if self.is_high() {
+            self.set_low();
+        } else {
+            self.set_high();
+        }
     }
 }
-
-unsafe impl Send for Register<usize> {}
-unsafe impl Sync for Register<usize> {}
 
 unsafe impl Send for GpioPin {}
 unsafe impl Sync for GpioPin {}

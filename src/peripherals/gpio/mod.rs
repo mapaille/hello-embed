@@ -11,30 +11,50 @@ const GPIO_P0: Gpio = Gpio::new(0x5000_0000);
 const GPIO_P1: Gpio = Gpio::new(0x5000_0300);
 
 pub struct Gpio {
-    base_addr: NonNull<usize>,
+    base_addr: NonNull<u32>,
 }
 
 impl Gpio {
     pub const fn new(base_addr: usize) -> Self {
         Self {
-            base_addr: NonNull::new(base_addr as *mut usize).unwrap(),
+            base_addr: NonNull::new(base_addr as *mut u32).unwrap(),
         }
+    }
+
+    #[inline]
+    pub const unsafe fn outset(&self) -> *mut u32 {
+        unsafe { self.base_addr.as_ptr().add(0x508 / 4) }
+    }
+
+    #[inline]
+    pub const unsafe fn outclr(&self) -> *mut u32 {
+        unsafe { self.base_addr.as_ptr().add(0x50C / 4) }
+    }
+
+    #[inline]
+    pub const unsafe fn input(&self) -> *const u32 {
+        unsafe { self.base_addr.as_ptr().add(0x510 / 4) }
+    }
+
+    #[inline]
+    pub const unsafe fn pin_cnf(&self, pin: u8) -> *mut u32 {
+        unsafe { self.base_addr.as_ptr().add(0x700 / 4 + pin as usize) }
     }
 }
 
 pub fn init() {
-    p0::BTN_A.as_input_pullup();
-    p0::BTN_B.as_input_pullup();
+    p0::BTN_A.configure_input_pullup();
+    p0::BTN_B.configure_input_pullup();
 
-    p0::COL1.as_output();
-    p0::COL2.as_output();
-    p0::COL3.as_output();
-    p1::COL4.as_output();
-    p0::COL5.as_output();
+    p0::COL1.configure_output();
+    p0::COL2.configure_output();
+    p0::COL3.configure_output();
+    p1::COL4.configure_output();
+    p0::COL5.configure_output();
 
-    p0::ROW1.as_output();
-    p0::ROW2.as_output();
-    p0::ROW3.as_output();
-    p0::ROW4.as_output();
-    p0::ROW5.as_output();
+    p0::ROW1.configure_output();
+    p0::ROW2.configure_output();
+    p0::ROW3.configure_output();
+    p0::ROW4.configure_output();
+    p0::ROW5.configure_output();
 }
