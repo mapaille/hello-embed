@@ -29,5 +29,7 @@ const fn panic(_info: &PanicInfo) -> ! {
 pub unsafe extern "C" fn reset_handler() -> ! {
     system::init();
     let app = App::new();
+    app.hardware.speaker.init();
+    app.hardware.speaker.beep();
     app.run();
 }
