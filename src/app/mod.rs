@@ -1,16 +1,16 @@
 #![allow(dead_code)]
 
-pub mod cancellation;
+pub mod cancellation_token;
 pub mod hardware;
 pub mod rtc_handler;
 
-use crate::app::cancellation::CancellationToken;
+use crate::app::cancellation_token::CancellationToken;
 use crate::app::hardware::Hardware;
 use crate::interrupt::wfi;
 use crate::traits::{Cancellable, Resettable};
 use core::sync::atomic::{AtomicUsize, Ordering};
 
-static HARDWARE: Hardware = Hardware::new();
+const HARDWARE: Hardware = Hardware::new();
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
 static SELECTED_PROGRAM_INDEX: AtomicUsize = AtomicUsize::new(0);
 

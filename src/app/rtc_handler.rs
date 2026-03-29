@@ -1,4 +1,4 @@
-use crate::app::cancellation::CancellationToken;
+use crate::app::cancellation_token::CancellationToken;
 use crate::app::hardware::Hardware;
 use crate::app::{CANCELLATION_TOKEN, HARDWARE, SELECTED_PROGRAM_INDEX};
 use crate::traits::{Cancellable, Pressable};

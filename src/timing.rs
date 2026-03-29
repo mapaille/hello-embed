@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::app::cancellation::CancellationToken;
+use crate::app::cancellation_token::CancellationToken;
 use crate::interrupt::wfi;
 use crate::peripherals::rtc::RTC_TICKS;
 use crate::traits::Cancellable;

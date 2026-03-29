@@ -1,4 +1,4 @@
-use crate::app::cancellation::CancellationToken;
+use crate::app::cancellation_token::CancellationToken;
 use crate::drivers::display::{animations, frames};
 
 pub trait Cancellable {
