@@ -1,5 +1,5 @@
 #[allow(clippy::wildcard_imports)]
-use crate::drivers::audio::*;
+use crate::drivers::audio::notes::*;
 use crate::programs::Program;
 use crate::timing::wait_ticks;
 use crate::traits::Cancellable;

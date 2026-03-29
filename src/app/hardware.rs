@@ -5,6 +5,7 @@ use crate::drivers::temperature_sensor::TemperatureSensor;
 use crate::peripherals::gpio;
 use crate::peripherals::gpio::GpioPin;
 
+const CPU_FREQ_HZ: u32 = 32_000_000;
 const TEMPERATURE_SENSOR_MAX_ATTEMPS: usize = 10;
 const LEFT_BUTTON_PIN: GpioPin = gpio::p0::BTN_A;
 const RIGHT_BUTTON_PIN: GpioPin = gpio::p0::BTN_B;
@@ -32,7 +33,7 @@ const RIGHT_BUTTON: Button = Button::new(RIGHT_BUTTON_PIN);
 const TEMPERATURE_SENSOR: TemperatureSensor =
     TemperatureSensor::new(TEMPERATURE_SENSOR_MAX_ATTEMPS);
 const SCREEN: EmbeddedScreen<5, 5> = EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS);
-const SPEAKER: Speaker = Speaker::new(&SPEAKER_PIN);
+const SPEAKER: Speaker = Speaker::new(&SPEAKER_PIN, CPU_FREQ_HZ);
 
 pub struct Hardware {
     pub screen: EmbeddedScreen<5, 5>,

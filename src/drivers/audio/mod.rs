@@ -1,30 +1,15 @@
+pub mod notes;
+
 use crate::peripherals::gpio::GpioPin;
-
-const CPU_FREQ_HZ: u32 = 32_000_000;
-
-pub const NOTE_C4: u32 = 261;
-pub const NOTE_D4: u32 = 293;
-pub const NOTE_E4: u32 = 329;
-pub const NOTE_F4: u32 = 349;
-pub const NOTE_G4: u32 = 391;
-pub const NOTE_A4: u32 = 440;
-pub const NOTE_B4: u32 = 493;
-
-pub const NOTE_C5: u32 = 523;
-pub const NOTE_D5: u32 = 587;
-pub const NOTE_E5: u32 = 659;
-pub const NOTE_F5: u32 = 698;
-pub const NOTE_G5: u32 = 783;
-pub const NOTE_A5: u32 = 880;
-pub const NOTE_B5: u32 = 987;
 
 pub struct Speaker {
     pin: &'static GpioPin,
+    cpu_freq_hz: u32,
 }
 
 impl Speaker {
-    pub const fn new(pin: &'static GpioPin) -> Self {
-        Self { pin }
+    pub const fn new(pin: &'static GpioPin, cpu_freq_hz: u32) -> Self {
+        Self { pin, cpu_freq_hz }
     }
 
     pub fn init(&self) {
@@ -33,7 +18,7 @@ impl Speaker {
     }
 
     pub fn play_tone(&self, frequency_hz: u32, duration_ms: u32) {
-        let period_cycles = CPU_FREQ_HZ / frequency_hz;
+        let period_cycles = self.cpu_freq_hz / frequency_hz;
         let half_period_cycles = period_cycles / 2;
         let num_periods = u64::from(frequency_hz) * u64::from(duration_ms) / 1000;
 
