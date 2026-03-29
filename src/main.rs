@@ -15,6 +15,7 @@ mod traits;
 mod vector_table;
 
 use crate::app::App;
+use crate::traits::Clearable;
 use core::panic::PanicInfo;
 
 #[panic_handler]
@@ -29,7 +30,8 @@ const fn panic(_info: &PanicInfo) -> ! {
 pub unsafe extern "C" fn reset_handler() -> ! {
     system::init();
     let app = App::new();
-    app.hardware.speaker.init();
+    app.hardware.init();
+    app.hardware.screen.clear();
     app.hardware.speaker.beep();
     app.run();
 }

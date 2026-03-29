@@ -23,6 +23,16 @@ impl<const X: usize, const Y: usize> EmbeddedScreen<X, Y> {
             col_pins,
         }
     }
+
+    pub fn init(&self) {
+        for row_pin in self.row_pins {
+            row_pin.configure_output();
+        }
+
+        for col_pin in self.col_pins {
+            col_pin.configure_output();
+        }
+    }
 }
 
 impl Displayable<5, 5> for EmbeddedScreen<5, 5> {

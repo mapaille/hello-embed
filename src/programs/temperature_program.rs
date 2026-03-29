@@ -1,5 +1,5 @@
 use crate::app::App;
-use crate::drivers::screens::{EmbeddedScreen, frames};
+use crate::drivers::display::{EmbeddedScreen, frames};
 use crate::interrupt;
 use crate::programs::Program;
 use crate::timing::wait_ticks;

@@ -1,5 +1,5 @@
-use crate::drivers::screens::frames::frame::Frame;
-use crate::drivers::screens::frames::{letters, symbols};
+use crate::drivers::display::frames::frame::Frame;
+use crate::drivers::display::frames::{letters, symbols};
 
 pub struct Animation<const X: usize, const Y: usize, const SIZE: usize> {
     pub frames: &'static [&'static Frame<X, Y>; SIZE],

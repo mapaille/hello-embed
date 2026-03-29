@@ -1,14 +1,7 @@
-#![allow(unused)]
-
-mod button;
-mod face_touch;
-mod temperature_sensor;
-
-use crate::app::hardware::button::Button;
-use crate::app::hardware::face_touch::FaceTouch;
-use crate::app::hardware::temperature_sensor::TemperatureSensor;
 use crate::drivers::audio::Speaker;
-use crate::drivers::screens::EmbeddedScreen;
+use crate::drivers::button::Button;
+use crate::drivers::display::EmbeddedScreen;
+use crate::drivers::temperature_sensor::TemperatureSensor;
 use crate::peripherals::gpio;
 use crate::peripherals::gpio::GpioPin;
 
@@ -36,7 +29,6 @@ const SCREEN_COL_PINS: [GpioPin; 5] = [
 
 const LEFT_BUTTON: Button = Button::new(LEFT_BUTTON_PIN);
 const RIGHT_BUTTON: Button = Button::new(RIGHT_BUTTON_PIN);
-const FACE_TOUCH: FaceTouch = FaceTouch::new(FACE_TOUCH_PIN);
 const TEMPERATURE_SENSOR: TemperatureSensor =
     TemperatureSensor::new(TEMPERATURE_SENSOR_MAX_ATTEMPS);
 const SCREEN: EmbeddedScreen<5, 5> = EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS);
@@ -46,7 +38,6 @@ pub struct Hardware {
     pub screen: EmbeddedScreen<5, 5>,
     pub left_button: Button,
     pub right_button: Button,
-    pub touch_button: FaceTouch,
     pub temperature_sensor: TemperatureSensor,
     pub speaker: Speaker,
 }
@@ -57,9 +48,15 @@ impl Hardware {
             screen: SCREEN,
             left_button: LEFT_BUTTON,
             right_button: RIGHT_BUTTON,
-            touch_button: FACE_TOUCH,
             temperature_sensor: TEMPERATURE_SENSOR,
             speaker: SPEAKER,
         }
+    }
+
+    pub fn init(&self) {
+        self.speaker.init();
+        self.left_button.init();
+        self.right_button.init();
+        self.screen.init();
     }
 }

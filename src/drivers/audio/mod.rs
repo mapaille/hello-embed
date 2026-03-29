@@ -46,7 +46,7 @@ impl Speaker {
 
         self.stop();
     }
-    
+
     pub fn beep(&self) {
         self.play_tone(2700, 100);
     }

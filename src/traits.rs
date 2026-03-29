@@ -1,5 +1,5 @@
 use crate::app::cancellation::CancellationToken;
-use crate::drivers::screens::{animations, frames};
+use crate::drivers::display::{animations, frames};
 
 pub trait Cancellable {
     fn cancel(&self);

@@ -1,4 +1,4 @@
-use crate::drivers::screens::frames::frame;
+use crate::drivers::display::frames::frame;
 
 pub const LETTER_E: frame::Frame<5, 5> = frame::Frame(&[
     [true, true, true, true, false],

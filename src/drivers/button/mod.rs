@@ -9,6 +9,10 @@ impl Button {
     pub const fn new(pin: GpioPin) -> Self {
         Self { pin }
     }
+
+    pub fn init(&self) {
+        self.pin.configure_input_pullup();
+    }
 }
 
 impl Pressable for Button {

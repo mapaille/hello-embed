@@ -2,7 +2,7 @@
 #![allow(unused_imports)]
 
 use crate::app::App;
-use crate::drivers::screens::EmbeddedScreen;
+use crate::drivers::display::EmbeddedScreen;
 use core::ops::Deref;
 
 mod audio_program;

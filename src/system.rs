@@ -1,12 +1,11 @@
 use crate::app::rtc_handler::RtcHandler;
-use crate::peripherals::{gpio, rtc};
+use crate::peripherals::rtc;
 use crate::{clock, interrupt, power};
 
 const RTC_HANDLER: RtcHandler = RtcHandler::new();
 
 pub fn init() {
     clock::use_high_frequency_clock();
-    gpio::init();
     rtc::init(rtc_callback);
     interrupt::enable_global_interrupts();
     power::enable_low_power();

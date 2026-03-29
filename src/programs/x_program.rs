@@ -1,5 +1,5 @@
 use crate::app::App;
-use crate::drivers::screens::frames::LETTER_X;
+use crate::drivers::display::frames::LETTER_X;
 use crate::interrupt::wfi;
 use crate::programs::Program;
 use crate::timing::wait_ticks;

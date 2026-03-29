@@ -41,20 +41,3 @@ impl Gpio {
         unsafe { self.base_addr.as_ptr().add(0x700 / 4 + pin as usize) }
     }
 }
-
-pub fn init() {
-    p0::BTN_A.configure_input_pullup();
-    p0::BTN_B.configure_input_pullup();
-
-    p0::COL1.configure_output();
-    p0::COL2.configure_output();
-    p0::COL3.configure_output();
-    p1::COL4.configure_output();
-    p0::COL5.configure_output();
-
-    p0::ROW1.configure_output();
-    p0::ROW2.configure_output();
-    p0::ROW3.configure_output();
-    p0::ROW4.configure_output();
-    p0::ROW5.configure_output();
-}

@@ -1,4 +1,4 @@
-use crate::drivers::screens::frames::frame::Frame;
+use crate::drivers::display::frames::frame::Frame;
 
 pub const DIGIT_0: Frame<5, 5> = Frame(&[
     [false, true, true, true, false],
