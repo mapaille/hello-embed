@@ -30,6 +30,8 @@ impl App {
     }
 
     pub fn run(&self) -> ! {
+        self.selected_program_index.store(0, Ordering::Relaxed);
+        self.cancellation_token.reset();
         let programs = crate::programs::get_programs();
 
         loop {
