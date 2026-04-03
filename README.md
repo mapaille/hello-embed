@@ -11,6 +11,14 @@ Hobby project to learn low-level programming (`no_std`, bare-metal, interrupts, 
 - Temperature sensor display
 - Speaker/sound output
 
+## Documentation
+
+Schematics and hardware specs are available in `docs/`:
+- `cpu-specs.pdf` - nRF52833 CPU specifications
+- `hardware.pdf` - Hardware overview
+- `schematics.pdf` - Circuit schematics
+- `speaker-specs.pdf` - Speaker specifications
+
 ## Commands
 
 ```bash
