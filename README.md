@@ -19,6 +19,12 @@ Schematics and hardware specs are available in `docs/`:
 - `schematics.pdf` - Circuit schematics
 - `speaker-specs.pdf` - Speaker specifications
 
+## Requirements
+
+- `rustup target add thumbv7em-none-eabihf`
+- `cargo install probe-run` (or `cargo-embed`)
+- Hardware: BBC micro:bit v2
+
 ## Commands
 
 ```bash
