@@ -19,6 +19,11 @@ impl GpioPin {
     }
 
     #[inline]
+    pub const fn pin_number(&self) -> u32 {
+        self.pin as u32
+    }
+
+    #[inline]
     const fn pin_mask(&self) -> u32 {
         1u32 << self.pin
     }

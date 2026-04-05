@@ -32,6 +32,5 @@ pub unsafe extern "C" fn reset_handler() -> ! {
     let app = App::new();
     app.hardware.init();
     app.hardware.screen.clear();
-    app.hardware.speaker.beep();
     app.run();
 }

@@ -1,49 +1,39 @@
 pub mod notes;
 
+use crate::app::cancellation_token::CancellationToken;
 use crate::peripherals::gpio::GpioPin;
+use crate::peripherals::pwm::Pwm;
+use crate::timing::wait_ticks;
 
 pub struct Speaker {
     pin: &'static GpioPin,
-    cpu_freq_hz: u32,
+    pwm: &'static Pwm,
 }
 
 impl Speaker {
-    pub const fn new(pin: &'static GpioPin, cpu_freq_hz: u32) -> Self {
-        Self { pin, cpu_freq_hz }
+    pub const fn new(pin: &'static GpioPin, pwm: &'static Pwm) -> Self {
+        Self { pin, pwm }
     }
 
     pub fn init(&self) {
         self.pin.configure_output();
-        self.stop();
-    }
-
-    pub fn play_tone(&self, frequency_hz: u32, duration_ms: u32) {
-        let period_cycles = self.cpu_freq_hz / frequency_hz;
-        let half_period_cycles = period_cycles / 2;
-        let num_periods = u64::from(frequency_hz) * u64::from(duration_ms) / 1000;
-
-        for _ in 0..num_periods {
-            self.pin.set_high();
-            delay_cycles(half_period_cycles);
-            self.pin.set_low();
-            delay_cycles(half_period_cycles);
-        }
-
-        self.stop();
-    }
-
-    pub fn beep(&self) {
-        self.play_tone(2700, 100);
-    }
-
-    #[inline]
-    pub fn play(&self) {
-        self.pin.set_high();
-    }
-
-    #[inline]
-    pub fn stop(&self) {
         self.pin.set_low();
+
+        self.pwm.psel_out_0();
+        self.pwm.enable();
+        self.pwm.mode();
+        self.pwm.prescaler();
+        self.pwm.countertop();
+        self.pwm.seq0_ptr();
+        self.pwm.seq0_cnt();
+        self.pwm.seq0_refresh();
+    }
+
+    pub fn beep(&self, cancellation_token: &CancellationToken) {
+        self.pwm.prescaler();
+        self.pwm.tasks_seqstart0();
+        wait_ticks(9800, cancellation_token);
+        self.pwm.tasks_stop();
     }
 }
 
