@@ -2,9 +2,20 @@
 
 use crate::peripherals::gpio::Gpio;
 
-// nRF52833 GPIO register offsets (divided by 4 for u32 indexing)
-const CNF_OUTPUT_STD: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0001; // DIR=1, DRIVE=S0S1=0, rest default
-const CNF_INPUT_PULLUP_STD: u32 = 0b0000_0000_0000_0000_0000_1100_0000_0000; // PULL=3, DIR=0, DRIVE=0
+// For PWM output pins (speaker, LEDs, etc.)
+const CNF_OUTPUT_STD: u32 = 0b0000_0000_0000_0000_0000_0000_0000_0001u32;
+// Bit breakdown:
+// - DIR   = 1
+// - INPUT = 0 (disconnected)
+// - PULL  = 00 (no pull)
+// - DRIVE = 000 (S0S1 standard)
+
+// For regular input pins with pull-up (your second constant is fine, but clearer name helps)
+const CNF_INPUT_PULLUP_STD: u32 = 0b0000_0000_0000_0000_0000_1100_0000_0000u32;
+// - DIR   = 0
+// - INPUT = 0 (or 1 depending on use)
+// - PULL  = 11 (PullUp)
+// - DRIVE = 000
 
 #[derive(Clone, Copy)]
 pub struct GpioPin {

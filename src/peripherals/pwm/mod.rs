@@ -78,7 +78,7 @@ impl Pwm {
         unsafe {
             write_volatile(
                 self.base_addr.add(PSEL_OUT0_OFFSET).as_ptr(),
-                0b0111_1111_1111_1111_1111_1111_1100_0000u32,
+                0u32,
             );
         }
     }
