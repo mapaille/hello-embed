@@ -15,6 +15,7 @@ Hobby project to learn low-level programming (`no_std`, bare-metal, interrupts, 
 
 - [micro:bit v2 schematic](https://tech.microbit.org/hardware/schematic/) - Official micro:bit v2 hardware schematic
 - [microbit-dal](https://github.com/lancaster-university/microbit-dal/) - Lancaster University BBC micro:bit runtime
+- [MicroPython microbit-v2](https://github.com/microbit-foundation/micropython-microbit-v2) - Official micro:bit v2 MicroPython implementation
 
 ## Documentation
 
