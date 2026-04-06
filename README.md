@@ -11,6 +11,11 @@ Hobby project to learn low-level programming (`no_std`, bare-metal, interrupts, 
 - Temperature sensor display
 - Speaker/sound output
 
+## Useful Links
+
+- [micro:bit v2 schematic](https://tech.microbit.org/hardware/schematic/) - Official micro:bit v2 hardware schematic
+- [microbit-dal](https://github.com/lancaster-university/microbit-dal/) - Lancaster University BBC micro:bit runtime
+
 ## Documentation
 
 Schematics and hardware specs are available in `docs/`:
