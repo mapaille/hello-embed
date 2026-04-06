@@ -45,6 +45,12 @@ impl GpioPin {
         }
     }
 
+    pub fn configure_speaker(&self) {
+        unsafe {
+            self.port.pin_cnf(self.pin).write_volatile(0b0000_0000_0000_0000_0000_0000_0000_0011u32);
+        }
+    }
+
     #[inline]
     pub fn configure_input_pullup(&self) {
         unsafe {

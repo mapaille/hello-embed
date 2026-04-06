@@ -55,7 +55,10 @@ impl Hardware {
     }
 
     pub fn init(&self) {
-        self.speaker.init();
+        unsafe {
+            self.speaker.init();
+        }
+        
         self.left_button.init();
         self.right_button.init();
         self.screen.init();

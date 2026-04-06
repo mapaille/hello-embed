@@ -3,7 +3,9 @@ pub mod notes;
 use crate::app::cancellation_token::CancellationToken;
 use crate::peripherals::gpio::GpioPin;
 use crate::peripherals::pwm::Pwm;
-use crate::timing::wait_ticks;
+use core::ptr;
+
+static mut DUTY_RAM: u16 = 8000;
 
 pub struct Speaker {
     pin: &'static GpioPin,
@@ -15,37 +17,28 @@ impl Speaker {
         Self { pin, pwm }
     }
 
-    pub fn init(&self) {
-        self.pin.configure_output();
-        self.pin.set_low();
+    pub unsafe fn init(&self) {
+        self.pin.configure_speaker();
 
-        self.pwm.psel_out_0();
-        self.pwm.enable();
-        self.pwm.mode();
+        self.pwm.tasks_stop();
         self.pwm.prescaler();
+        self.pwm.mode();
+        self.pwm.decoder();
+        self.pwm.loop_();
         self.pwm.countertop();
-        self.pwm.seq0_ptr();
         self.pwm.seq0_cnt();
         self.pwm.seq0_refresh();
+        self.pwm.seq0_enddelay();
+        self.pwm.seq0_ptr(ptr::addr_of!(DUTY_RAM) as usize);
+        self.pwm.psel_out_0();
+        self.pwm.enable();
     }
 
-    pub fn beep(&self, cancellation_token: &CancellationToken) {
-        self.pwm.prescaler();
+    pub fn start(&self, _cancellation_token: &CancellationToken) {
         self.pwm.tasks_seqstart0();
-        wait_ticks(9800, cancellation_token);
-        self.pwm.tasks_stop();
     }
-}
 
-#[inline(never)]
-#[allow(unused_assignments)]
-fn delay_cycles(mut cycles: u32) {
-    unsafe {
-        core::arch::asm!(
-        "1:",
-        "subs {0}, {0}, #1",
-        "bne 1b",
-        inout(reg) cycles,
-        );
+    pub fn stop(&self) {
+        self.pwm.tasks_stop();
     }
 }

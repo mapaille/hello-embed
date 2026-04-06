@@ -8,9 +8,12 @@ pub struct AudioProgram;
 
 impl Program for AudioProgram {
     fn run(&self, app: &crate::app::App) {
+        app.hardware.speaker.start(app.cancellation_token);
+
         while !app.cancellation_token.is_cancelled() {
-            app.hardware.speaker.beep(app.cancellation_token);
-            wait_ticks(2000, app.cancellation_token);
+            wait_ticks(100, app.cancellation_token); // low CPU via wfi
         }
+
+        app.hardware.speaker.stop();
     }
 }
