@@ -10,7 +10,7 @@ const TEMPERATURE_SENSOR_MAX_ATTEMPS: usize = 10;
 const LEFT_BUTTON_PIN: GpioPin = gpio::p0::BTN_A;
 const RIGHT_BUTTON_PIN: GpioPin = gpio::p0::BTN_B;
 const FACE_TOUCH_PIN: GpioPin = gpio::p1::FACE_TOUCH;
-const SPEAKER_PIN: GpioPin = gpio::p0::RING0;
+const SPEAKER_PIN: GpioPin = gpio::p0::SPEAKER;
 
 const SCREEN_ROW_PINS: [GpioPin; 5] = [
     gpio::p0::ROW1,

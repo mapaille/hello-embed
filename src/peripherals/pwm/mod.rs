@@ -1,5 +1,5 @@
-use core::ptr::NonNull;
 use crate::traits::Register;
+use core::ptr::NonNull;
 
 pub const PWM0: Pwm = Pwm::new(0x4001_C000);
 
@@ -26,8 +26,12 @@ impl Pwm {
         self.write_reg(0x500, 1u32);
     }
 
+    pub fn disable(&self) {
+        self.write_reg(0x500, 0u32);
+    }
+
     pub fn mode(&self) {
-        self.write_reg(0x504, 0u32);
+        self.write_reg(0x504, 0u32); // Up counter
     }
 
     pub fn countertop(&self, value: u32) {
@@ -38,32 +42,62 @@ impl Pwm {
         self.write_reg(0x510, 0u32);
     }
 
-    pub fn loop_max(&self) {
-        self.write_reg(0x514, 0xFFFF_FFFFu32);
+    pub fn loop_one(&self) {
+        self.write_reg(0x514, 1u32);
     }
 
-    pub fn seq0_ptr(&self, ptr: *mut [u16;1]) {
+    /// SHORTS: automatically restart SEQ[0] when LOOPSDONE fires.
+    /// This provides truly continuous playback without CPU intervention.
+    pub fn shorts_loopsdone_seqstart0(&self) {
+        self.write_reg(0x200, 1u32 << 7); // Bit 7 = LOOPSDONE_SEQSTART0
+    }
+
+    pub fn seq0_ptr(&self, ptr: *const u16) {
         self.write_reg(0x520, ptr as u32);
     }
 
-    pub fn seq0_cnt(&self) {
-        self.write_reg(0x524, 1u32);
+    pub fn seq0_cnt(&self, count: u32) {
+        self.write_reg(0x524, count);
     }
 
-    pub fn seq0_refresh(&self) {
-        self.write_reg(0x528, 0u32);
+    pub fn seq0_refresh(&self, value: u32) {
+        self.write_reg(0x528, value);
     }
 
     pub fn prescaler(&self) {
-        self.write_reg(0x50C, 7u32);
+        self.write_reg(0x50C, 4u32); // DIV_16 → 1 MHz PWM clock
     }
 
     pub fn seq0_enddelay(&self) {
         self.write_reg(0x52C, 0u32);
     }
 
-    pub fn psel_out_0(&self) {
-        self.write_reg(0x560, 0u32);
+    pub fn seq1_ptr(&self, ptr: *const u16) {
+        self.write_reg(0x540, ptr as u32);
+    }
+
+    pub fn seq1_cnt(&self, count: u32) {
+        self.write_reg(0x544, count);
+    }
+
+    pub fn seq1_refresh(&self, value: u32) {
+        self.write_reg(0x548, value);
+    }
+
+    pub fn seq1_enddelay(&self) {
+        self.write_reg(0x54C, 0u32);
+    }
+
+    pub fn psel_out_0(&self, pin: u32) {
+        self.write_reg(0x560, pin);
+    }
+
+    /// Disconnect all PSEL.OUT channels (write 0xFFFFFFFF = disconnected)
+    pub fn psel_disconnect_all(&self) {
+        self.write_reg(0x560, 0xFFFF_FFFFu32);
+        self.write_reg(0x564, 0xFFFF_FFFFu32);
+        self.write_reg(0x568, 0xFFFF_FFFFu32);
+        self.write_reg(0x56C, 0xFFFF_FFFFu32);
     }
 }
 

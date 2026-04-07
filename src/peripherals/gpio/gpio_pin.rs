@@ -45,9 +45,20 @@ impl GpioPin {
         }
     }
 
+    /// Configure pin for speaker output: output direction, high drive (H0H1).
+    /// High drive is required by the micro:bit v2 speaker circuit (matches CODAL).
     pub fn configure_speaker(&self) {
+        // Bit breakdown:
+        // - DIR   = 1 (Output)
+        // - INPUT = 1 (Connected, allows peripheral readback)
+        // - PULL  = 00 (No pull)
+        // - DRIVE = 011 (H0H1: High drive '0', High drive '1')
+        // - SENSE = 00 (Disabled)
+        const CNF_OUTPUT_HIGH_DRIVE: u32 = 0b0000_0000_0000_0000_0000_0011_0000_0011;
         unsafe {
-            self.port.pin_cnf(self.pin).write_volatile(0b0000_0000_0000_0000_0000_0000_0000_0011u32);
+            self.port
+                .pin_cnf(self.pin)
+                .write_volatile(CNF_OUTPUT_HIGH_DRIVE);
         }
     }
 

@@ -3,7 +3,7 @@
 use super::gpio_pin::GpioPin;
 use crate::peripherals::gpio::GPIO_P0;
 
-pub const RING0: GpioPin = GpioPin::new(&GPIO_P0, 0);
+pub const SPEAKER: GpioPin = GpioPin::new(&GPIO_P0, 0);
 pub const COL2: GpioPin = GpioPin::new(&GPIO_P0, 11);
 pub const BTN_A: GpioPin = GpioPin::new(&GPIO_P0, 14);
 pub const ROW3: GpioPin = GpioPin::new(&GPIO_P0, 15);

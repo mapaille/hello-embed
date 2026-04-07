@@ -1,6 +1,6 @@
-use core::ptr::{read_volatile, write_volatile, NonNull};
 use crate::app::cancellation_token::CancellationToken;
 use crate::drivers::display::{animations, frames};
+use core::ptr::{read_volatile, write_volatile, NonNull};
 
 pub trait Cancellable {
     fn cancel(&self);
@@ -22,6 +22,7 @@ pub trait Clearable {
 pub trait Register {
     fn base_addr(&self) -> NonNull<u8>;
 
+    #[allow(clippy::cast_ptr_alignment)] // Hardware register addresses are always word-aligned
     fn write_reg(&self, byte_offset: usize, value: u32) {
         unsafe {
             let reg_ptr = self.base_addr().as_ptr().add(byte_offset).cast::<u32>();
@@ -29,6 +30,7 @@ pub trait Register {
         }
     }
 
+    #[allow(clippy::cast_ptr_alignment)] // Hardware register addresses are always word-aligned
     fn read_reg(&self, byte_offset: usize) -> u32 {
         unsafe {
             let reg_ptr = self.base_addr().as_ptr().add(byte_offset).cast::<u32>();
