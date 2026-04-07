@@ -16,8 +16,6 @@ const NOTE_DURATION_TICKS: usize = 512;
 impl Program for AudioProgram {
     fn run(&self, app: &crate::app::App) {
         let speaker = app.hardware.speaker;
-        speaker.start(app.cancellation_token);
-
         while !app.cancellation_token.is_cancelled() {
             for &note in &MELODY {
                 if app.cancellation_token.is_cancelled() {

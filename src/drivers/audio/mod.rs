@@ -2,7 +2,6 @@ pub mod notes;
 
 use core::ptr::{read_volatile, write_volatile};
 
-use crate::app::cancellation_token::CancellationToken;
 use crate::peripherals::gpio::GpioPin;
 use crate::peripherals::pwm::Pwm;
 use crate::traits::Register;
@@ -35,7 +34,9 @@ impl Speaker {
     #[allow(clippy::cast_possible_truncation)]
     pub fn init(&self) {
         self.pwm.disable();
+        self.pin.set_low();
         self.pin.configure_speaker();
+        self.pin.set_high();
         self.pwm.psel_disconnect_all();
         self.pwm.psel_out_0(self.pin.pin_number());
         self.pwm.mode();
@@ -67,10 +68,6 @@ impl Speaker {
         debug_assert_eq!(self.pwm.read_reg(0x500), 1);
         let ct = self.pwm.read_reg(0x508);
         debug_assert!(ct > 100 && ct < 10000);
-    }
-
-    pub fn start(&self, _cancellation_token: &CancellationToken) {
-        self.pwm.tasks_seqstart0();
     }
 
     pub fn stop(&self) {
