@@ -11,7 +11,7 @@ impl Program for AudioProgram {
         app.hardware.speaker.start(app.cancellation_token);
 
         while !app.cancellation_token.is_cancelled() {
-            wait_ticks(100, app.cancellation_token); // low CPU via wfi
+            wait_ticks(100, app.cancellation_token);
         }
 
         app.hardware.speaker.stop();

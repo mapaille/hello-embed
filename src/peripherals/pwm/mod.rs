@@ -1,111 +1,74 @@
-use core::ptr::{write_volatile, NonNull};
+use core::ptr::NonNull;
+use crate::traits::Register;
 
-pub static PWM0: Pwm = Pwm::new(0x4001_C000);
-
-const TASKS_STOP_OFFSET: usize = 0x004 / 4;
-const TASKS_SEQSTART0_OFFSET: usize = 0x008 / 4;
-const ENABLE_OFFSET: usize = 0x500 / 4;
-const MODE_OFFSET: usize = 0x504 / 4;
-const COUNTERTOP_OFFSET: usize = 0x508 / 4;
-const SEQ0_PTR_OFFSET: usize = 0x520 / 4;
-const SEQ0_ENDDELAY_OFFSET: usize = 0x52C / 4;
-const SEQ0_CNT_OFFSET: usize = 0x524 / 4;
-const SEQ0_REFRESH_OFFSET: usize = 0x528 / 4;
-const PRESCALER_OFFSET: usize = 0x50C / 4;
-const PSEL_OUT0_OFFSET: usize = 0x560 / 4;
+pub const PWM0: Pwm = Pwm::new(0x4001_C000);
 
 pub struct Pwm {
-    base_addr: NonNull<u32>,
+    base_addr: NonNull<u8>,
 }
 
 impl Pwm {
     pub const fn new(base_addr: u32) -> Self {
         Self {
-            base_addr: NonNull::new(base_addr as *mut u32).unwrap(),
+            base_addr: unsafe { NonNull::new_unchecked(base_addr as *mut u8) },
         }
     }
 
     pub fn tasks_stop(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(TASKS_STOP_OFFSET).as_ptr(), 1u32);
-        }
+        self.write_reg(0x004, 1u32);
     }
 
     pub fn tasks_seqstart0(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(TASKS_SEQSTART0_OFFSET).as_ptr(), 1u32);
-        }
+        self.write_reg(0x008, 1u32);
     }
 
     pub fn enable(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(ENABLE_OFFSET).as_ptr(), 1u32);
-        }
+        self.write_reg(0x500, 1u32);
     }
 
     pub fn mode(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(MODE_OFFSET).as_ptr(), 0u32);
-        }
+        self.write_reg(0x504, 0u32);
     }
 
-    pub fn countertop(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(COUNTERTOP_OFFSET).as_ptr(), 16000u32);
-        }
+    pub fn countertop(&self, value: u32) {
+        self.write_reg(0x508, value);
     }
 
-    pub fn seq0_refresh(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(SEQ0_REFRESH_OFFSET).as_ptr(), 0u32);
-        }
+    pub fn decoder_common(&self) {
+        self.write_reg(0x510, 0u32);
+    }
+
+    pub fn loop_max(&self) {
+        self.write_reg(0x514, 0xFFFF_FFFFu32);
+    }
+
+    pub fn seq0_ptr(&self, ptr: *mut [u16;1]) {
+        self.write_reg(0x520, ptr as u32);
     }
 
     pub fn seq0_cnt(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(SEQ0_CNT_OFFSET).as_ptr(), 1u32);
-        }
+        self.write_reg(0x524, 1u32);
     }
 
-    pub fn seq0_ptr(&self, duty_ptr_addr: usize) {
-        unsafe {
-            write_volatile(
-                self.base_addr.add(SEQ0_PTR_OFFSET).as_ptr(),
-                duty_ptr_addr as u32,
-            );
-        }
-    }
-
-    pub fn seq0_enddelay(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(SEQ0_ENDDELAY_OFFSET).as_ptr(), 0u32);
-        }
+    pub fn seq0_refresh(&self) {
+        self.write_reg(0x528, 0u32);
     }
 
     pub fn prescaler(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(PRESCALER_OFFSET).as_ptr(), 0u32);
-        }
+        self.write_reg(0x50C, 7u32);
+    }
+
+    pub fn seq0_enddelay(&self) {
+        self.write_reg(0x52C, 0u32);
     }
 
     pub fn psel_out_0(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(PSEL_OUT0_OFFSET).as_ptr(), 0u32);
-        }
-    }
-
-    pub fn decoder(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(0x510 / 4).as_ptr(), 0u32);
-        }
-    }
-
-    pub fn loop_(&self) {
-        unsafe {
-            write_volatile(self.base_addr.add(0x514 / 4).as_ptr(), 0u32);
-        }
+        self.write_reg(0x560, 0u32);
     }
 }
 
-unsafe impl Sync for Pwm {}
-unsafe impl Send for Pwm {}
+impl Register for Pwm {
+    fn base_addr(&self) -> NonNull<u8> {
+        self.base_addr
+    }
+}

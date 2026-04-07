@@ -15,12 +15,20 @@ mod traits;
 mod vector_table;
 
 use crate::app::App;
-use crate::traits::Clearable;
+use crate::traits::{Clearable, Displayable};
 use core::panic::PanicInfo;
+use crate::app::cancellation_token::CancellationToken;
+use crate::app::hardware::Hardware;
+use crate::drivers::display::animations::ANIMATION_LOADING;
 
 #[panic_handler]
-const fn panic(_info: &PanicInfo) -> ! {
-    loop {}
+pub fn panic(_info: &PanicInfo) -> ! {
+    let hardware = Hardware::new();
+    let cancellation_token = CancellationToken::new();
+
+    loop {
+        hardware.screen.play_animation_once(&ANIMATION_LOADING, 1, &cancellation_token);
+    }
 }
 
 /// # Safety

@@ -33,14 +33,14 @@ const RIGHT_BUTTON: Button = Button::new(RIGHT_BUTTON_PIN);
 const TEMPERATURE_SENSOR: TemperatureSensor =
     TemperatureSensor::new(TEMPERATURE_SENSOR_MAX_ATTEMPS);
 const SCREEN: EmbeddedScreen<5, 5> = EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS);
-const SPEAKER: Speaker = Speaker::new(&SPEAKER_PIN, &PWM0);
+static SPEAKER: Speaker = Speaker::new(&SPEAKER_PIN, &PWM0);
 
 pub struct Hardware {
     pub screen: EmbeddedScreen<5, 5>,
     pub left_button: Button,
     pub right_button: Button,
     pub temperature_sensor: TemperatureSensor,
-    pub speaker: Speaker,
+    pub speaker: &'static Speaker,
 }
 
 impl Hardware {
@@ -50,17 +50,14 @@ impl Hardware {
             left_button: LEFT_BUTTON,
             right_button: RIGHT_BUTTON,
             temperature_sensor: TEMPERATURE_SENSOR,
-            speaker: SPEAKER,
+            speaker: &SPEAKER,
         }
     }
 
     pub fn init(&self) {
-        unsafe {
-            self.speaker.init();
-        }
-        
         self.left_button.init();
         self.right_button.init();
         self.screen.init();
+        self.speaker.init();
     }
 }

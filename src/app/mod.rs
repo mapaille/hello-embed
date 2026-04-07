@@ -10,7 +10,7 @@ use crate::interrupt::wfi;
 use crate::traits::{Cancellable, Resettable};
 use core::sync::atomic::{AtomicUsize, Ordering};
 
-const HARDWARE: Hardware = Hardware::new();
+static HARDWARE: Hardware = Hardware::new();
 static CANCELLATION_TOKEN: CancellationToken = CancellationToken::new();
 static SELECTED_PROGRAM_INDEX: AtomicUsize = AtomicUsize::new(0);
 
