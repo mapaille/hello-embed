@@ -42,14 +42,13 @@ impl Pwm {
         self.write_reg(0x510, 0u32);
     }
 
-    pub fn loop_one(&self) {
-        self.write_reg(0x514, 1u32);
+    pub fn loop_disable(&self) {
+        self.write_reg(0x514, 0u32);
     }
 
-    /// SHORTS: automatically restart SEQ[0] when LOOPSDONE fires.
-    /// This provides truly continuous playback without CPU intervention.
-    pub fn shorts_loopsdone_seqstart0(&self) {
-        self.write_reg(0x200, 1u32 << 7); // Bit 7 = LOOPSDONE_SEQSTART0
+    /// SHORTS: automatically restart SEQ[0] on SEQEND0. Simpler continuous tone without relying on LOOP.
+    pub fn shorts_seqend0_seqstart0(&self) {
+        self.write_reg(0x200, 1u32 << 4); // SEQEND0_SEQSTART0 (nRF52 PS 6.15.4)
     }
 
     pub fn seq0_ptr(&self, ptr: *const u16) {
