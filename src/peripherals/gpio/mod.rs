@@ -17,7 +17,7 @@ pub struct Gpio {
 impl Gpio {
     pub const fn new(base_addr: usize) -> Self {
         Self {
-            base_addr: NonNull::new(base_addr as *mut u32).unwrap(),
+            base_addr: NonNull::new(base_addr as *mut u32).expect("Pointer should be valid"),
         }
     }
 
