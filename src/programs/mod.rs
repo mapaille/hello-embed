@@ -11,22 +11,19 @@ pub mod love_program;
 pub mod startup_program;
 pub mod temperature_alert_program;
 pub mod temperature_program;
-pub mod x_program;
 
 use crate::programs::audio_program::AudioProgram;
 use crate::programs::empty_program::EmptyProgram;
 use crate::programs::temperature_alert_program::TemperatureAlertProgram;
-use crate::programs::x_program::XProgram;
 pub use love_program::LoveProgram;
 pub use startup_program::StartupProgram;
 pub use temperature_program::TemperatureProgram;
 
-const NUMBER_OF_PROGRAMS: usize = 7;
+const NUMBER_OF_PROGRAMS: usize = 6;
 const EMPTY_PROGRAM: EmptyProgram = EmptyProgram;
 const STARTUP_PROGRAM: StartupProgram = StartupProgram;
 const LOVE_PROGRAM: LoveProgram = LoveProgram;
 const TEMPERATURE_PROGRAM: TemperatureProgram = TemperatureProgram;
-const X_PROGRAM: XProgram = XProgram;
 const AUDIO_PROGRAM: AudioProgram = AudioProgram;
 const TEMPERATURE_ALERT_PROGRAM: TemperatureAlertProgram = TemperatureAlertProgram;
 
@@ -36,7 +33,6 @@ pub const fn get_programs() -> [&'static dyn Program; NUMBER_OF_PROGRAMS] {
         &STARTUP_PROGRAM,
         &LOVE_PROGRAM,
         &TEMPERATURE_PROGRAM,
-        &X_PROGRAM,
         &AUDIO_PROGRAM,
         &TEMPERATURE_ALERT_PROGRAM,
     ]
