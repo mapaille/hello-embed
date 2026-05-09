@@ -16,6 +16,14 @@ pub const LETTER_M: frame::Frame<5, 5> = frame::Frame(&[
     [true, false, false, false, true],
 ]);
 
+pub const LETTER_T: frame::Frame<5, 5> = frame::Frame(&[
+    [true, true, true, true, true],
+    [false, false, true, false, false],
+    [false, false, true, false, false],
+    [false, false, true, false, false],
+    [false, false, true, false, false],
+]);
+
 pub const LETTER_X: frame::Frame<5, 5> = frame::Frame(&[
     [true, false, false, false, true],
     [false, true, false, true, false],

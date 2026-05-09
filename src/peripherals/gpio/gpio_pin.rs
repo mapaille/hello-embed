@@ -17,6 +17,14 @@ const CNF_INPUT_PULLUP_STD: u32 = 0b0000_0000_0000_0000_0000_1100_0000_0000u32;
 // - PULL  = 11 (PullUp)
 // - DRIVE = 000
 
+// For speaker use
+const CNF_OUTPUT_HIGH_DRIVE: u32 = 0b0000_0000_0000_0000_0000_0011_0000_0011;
+// - DIR   = 1 (Output)
+// - INPUT = 1 (Connected, allows peripheral readback)
+// - PULL  = 00 (No pull)
+// - DRIVE = 011 (H0H1: High drive '0', High drive '1')
+// - SENSE = 00 (Disabled)
+
 #[derive(Clone, Copy)]
 pub struct GpioPin {
     port: &'static Gpio,
@@ -30,50 +38,33 @@ impl GpioPin {
     }
 
     #[inline]
-    pub const fn pin_number(&self) -> u32 {
-        self.pin as u32
+    pub const fn pin_number(&self) -> u8 {
+        self.pin
     }
 
     #[inline]
-    const fn pin_mask(&self) -> u32 {
+    pub const fn pin_mask(&self) -> u32 {
         1u32 << self.pin
     }
 
+    #[inline]
     pub fn configure_output(&self) {
-        unsafe {
-            self.port.pin_cnf(self.pin).write_volatile(CNF_OUTPUT_STD);
-        }
+        self.port.set_pin_cnf(self, CNF_OUTPUT_STD);
     }
 
-    /// Configure pin for speaker output: output direction, high drive (H0H1).
-    /// High drive is required by the micro:bit v2 speaker circuit (matches CODAL).
+    #[inline]
     pub fn configure_speaker(&self) {
-        // Bit breakdown:
-        // - DIR   = 1 (Output)
-        // - INPUT = 1 (Connected, allows peripheral readback)
-        // - PULL  = 00 (No pull)
-        // - DRIVE = 011 (H0H1: High drive '0', High drive '1')
-        // - SENSE = 00 (Disabled)
-        const CNF_OUTPUT_HIGH_DRIVE: u32 = 0b0000_0000_0000_0000_0000_0011_0000_0011;
-        unsafe {
-            self.port
-                .pin_cnf(self.pin)
-                .write_volatile(CNF_OUTPUT_HIGH_DRIVE);
-        }
+        self.port.set_pin_cnf(self, CNF_OUTPUT_HIGH_DRIVE);
     }
 
     #[inline]
     pub fn configure_input_pullup(&self) {
-        unsafe {
-            self.port
-                .pin_cnf(self.pin)
-                .write_volatile(CNF_INPUT_PULLUP_STD);
-        }
+        self.port.set_pin_cnf(self, CNF_INPUT_PULLUP_STD);
     }
 
     #[inline]
     pub fn is_high(&self) -> bool {
-        (unsafe { self.port.input().read_volatile() } & self.pin_mask()) != 0
+        (self.port.is_input() & self.pin_mask()) != 0
     }
 
     #[inline]
@@ -83,16 +74,12 @@ impl GpioPin {
 
     #[inline]
     pub fn set_high(&self) {
-        unsafe {
-            self.port.outset().write_volatile(self.pin_mask());
-        }
+        self.port.set_outset(self);
     }
 
     #[inline]
     pub fn set_low(&self) {
-        unsafe {
-            self.port.outclr().write_volatile(self.pin_mask());
-        }
+        self.port.set_outclr(self);
     }
 
     #[inline]
@@ -106,7 +93,6 @@ impl GpioPin {
 
     #[inline]
     pub fn toggle(&self) {
-        // This pattern usually compiles to better code than read-modify-write
         if self.is_high() {
             self.set_low();
         } else {

@@ -87,8 +87,8 @@ impl Pwm {
         self.write_reg(0x54C, 0u32);
     }
 
-    pub fn psel_out_0(&self, pin: u32) {
-        self.write_reg(0x560, pin);
+    pub fn psel_out_0(&self, pin: u8) {
+        self.write_reg(0x560, pin.into());
     }
 
     /// Disconnect all PSEL.OUT channels (write 0xFFFFFFFF = disconnected)
