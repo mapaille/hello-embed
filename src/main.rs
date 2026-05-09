@@ -14,26 +14,28 @@ mod timing;
 mod traits;
 mod vector_table;
 
-use crate::app::App;
+use crate::app::{App, CANCELLATION_TOKEN, HARDWARE};
+use crate::drivers::display::animations::ANIMATION_LOADING;
 use crate::traits::{Clearable, Displayable};
 use core::panic::PanicInfo;
-use crate::app::cancellation_token::CancellationToken;
-use crate::app::hardware::Hardware;
-use crate::drivers::display::animations::ANIMATION_LOADING;
 
 #[panic_handler]
 pub fn panic(_info: &PanicInfo) -> ! {
-    let hardware = Hardware::new();
-    let cancellation_token = CancellationToken::new();
+    let hardware = &HARDWARE;
+    let cancellation_token = &CANCELLATION_TOKEN;
 
     loop {
-        hardware.screen.play_animation_once(&ANIMATION_LOADING, 1, &cancellation_token);
+        hardware
+            .screen
+            .play_animation_once(&ANIMATION_LOADING, 1, cancellation_token);
     }
 }
 
 /// # Safety
 ///
-/// This is the entry point of the program. It is called by the reset vector
+/// This is the entry point of the program. It is called by the reset vector and executes
+/// before any Rust initialization. It is safe because no other code has run yet, and
+/// we are solely responsible for setting up the execution environment.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn reset_handler() -> ! {
     system::init();

@@ -30,7 +30,14 @@ impl Program for TemperatureProgram {
 }
 
 fn read_and_display_temperature(app: &App) -> Option<()> {
-    let temperature = app.hardware.temperature_sensor.read_temperature().unwrap();
+    let Some(temperature) = app.hardware.temperature_sensor.read_temperature() else {
+        app.hardware.screen.refresh_for(
+            &frames::LETTER_X,
+            DISPLAY_DURATION_MS,
+            app.cancellation_token,
+        );
+        return None;
+    };
 
     if temperature >= MAX_DISPLAYABLE_TEMP {
         return None;
@@ -40,21 +47,25 @@ fn read_and_display_temperature(app: &App) -> Option<()> {
     Some(())
 }
 
+/// Display a single digit on the screen for the specified duration
+fn display_digit(app: &App, digit_index: u32) -> Option<()> {
+    let digit = frames::get_digit(digit_index)?;
+    app.hardware
+        .screen
+        .refresh_for(digit, DISPLAY_DURATION_MS, app.cancellation_token);
+    Some(())
+}
+
 fn display_temperature_digits(app: &App, temperature: u32) -> Option<()> {
-    if temperature < MAX_DISPLAYABLE_TEMP {
-        let first_digit = frames::get_digit(temperature / DIGIT_BASE).unwrap();
-        let second_digit = frames::get_digit(temperature % DIGIT_BASE).unwrap();
-
-        app.hardware
-            .screen
-            .refresh_for(first_digit, DISPLAY_DURATION_MS, app.cancellation_token);
-
-        app.hardware
-            .screen
-            .refresh_for(second_digit, DISPLAY_DURATION_MS, app.cancellation_token);
-
-        Some(())
-    } else {
-        None
+    if temperature >= MAX_DISPLAYABLE_TEMP {
+        return None;
     }
+
+    // Display first digit (tens place)
+    display_digit(app, temperature / DIGIT_BASE)?;
+
+    // Display second digit (ones place)
+    display_digit(app, temperature % DIGIT_BASE)?;
+
+    Some(())
 }

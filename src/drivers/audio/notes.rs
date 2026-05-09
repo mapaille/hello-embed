@@ -1,15 +1,25 @@
 pub const NOTE_C4: u32 = 261;
+pub const NOTE_CS4: u32 = 277;
 pub const NOTE_D4: u32 = 293;
+pub const NOTE_DS4: u32 = 311;
 pub const NOTE_E4: u32 = 329;
 pub const NOTE_F4: u32 = 349;
+pub const NOTE_FS4: u32 = 370;
 pub const NOTE_G4: u32 = 391;
+pub const NOTE_GS4: u32 = 415;
 pub const NOTE_A4: u32 = 440;
+pub const NOTE_AS4: u32 = 466;
 pub const NOTE_B4: u32 = 493;
 
 pub const NOTE_C5: u32 = 523;
+pub const NOTE_CS5: u32 = 554;
 pub const NOTE_D5: u32 = 587;
+pub const NOTE_DS5: u32 = 622;
 pub const NOTE_E5: u32 = 659;
 pub const NOTE_F5: u32 = 698;
+pub const NOTE_FS5: u32 = 740;
 pub const NOTE_G5: u32 = 783;
+pub const NOTE_GS5: u32 = 830;
 pub const NOTE_A5: u32 = 880;
+pub const NOTE_AS5: u32 = 932;
 pub const NOTE_B5: u32 = 987;

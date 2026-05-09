@@ -1,6 +1,6 @@
 use crate::app::cancellation_token::CancellationToken;
 use crate::drivers::display::{animations, frames};
-use core::ptr::{read_volatile, write_volatile, NonNull};
+use core::ptr::{NonNull, read_volatile, write_volatile};
 
 pub trait Cancellable {
     fn cancel(&self);
