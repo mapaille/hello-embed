@@ -30,7 +30,7 @@ impl Program for TemperatureProgram {
 }
 
 fn read_and_display_temperature(app: &App) -> Option<()> {
-    let Some(temperature) = app.hardware.temperature_sensor.read_temperature() else {
+    let Some(temperature) = app.hardware.thermometer.read_temperature() else {
         app.hardware.screen.refresh_for(
             &frames::LETTER_X,
             DISPLAY_DURATION_MS,

@@ -1,10 +1,11 @@
 use crate::drivers::audio::Speaker;
 use crate::drivers::button::Button;
 use crate::drivers::display::EmbeddedScreen;
-use crate::drivers::temperature_sensor::TemperatureSensor;
+use crate::drivers::thermometer::Thermometer;
 use crate::peripherals::gpio;
 use crate::peripherals::gpio::GpioPin;
 use crate::peripherals::pwm::PWM0;
+use crate::peripherals::temp::TEMP0;
 
 const TEMPERATURE_SENSOR_MAX_ATTEMPS: usize = 10;
 const LEFT_BUTTON_PIN: GpioPin = gpio::p0::BTN_A;
@@ -30,8 +31,7 @@ const SCREEN_COL_PINS: [GpioPin; 5] = [
 
 const LEFT_BUTTON: Button = Button::new(LEFT_BUTTON_PIN);
 const RIGHT_BUTTON: Button = Button::new(RIGHT_BUTTON_PIN);
-const TEMPERATURE_SENSOR: TemperatureSensor =
-    TemperatureSensor::new(TEMPERATURE_SENSOR_MAX_ATTEMPS);
+const THERMOMETER: Thermometer = Thermometer::new(&TEMP0, TEMPERATURE_SENSOR_MAX_ATTEMPS);
 const SCREEN: EmbeddedScreen<5, 5> = EmbeddedScreen::new(SCREEN_ROW_PINS, SCREEN_COL_PINS);
 static SPEAKER: Speaker = Speaker::new(&SPEAKER_PIN, &PWM0);
 
@@ -39,7 +39,7 @@ pub struct Hardware {
     pub screen: EmbeddedScreen<5, 5>,
     pub left_button: Button,
     pub right_button: Button,
-    pub temperature_sensor: TemperatureSensor,
+    pub thermometer: Thermometer,
     pub speaker: &'static Speaker,
 }
 
@@ -49,7 +49,7 @@ impl Hardware {
             screen: SCREEN,
             left_button: LEFT_BUTTON,
             right_button: RIGHT_BUTTON,
-            temperature_sensor: TEMPERATURE_SENSOR,
+            thermometer: THERMOMETER,
             speaker: &SPEAKER,
         }
     }

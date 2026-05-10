@@ -1,32 +1,48 @@
 #![allow(dead_code)]
 
-const BASE_ADDRESS: u32 = 0x4000_C000;
-const TASKS_START: *mut u32 = (BASE_ADDRESS) as *mut u32;
-const TASKS_STOP: *mut u32 = (BASE_ADDRESS + 0x004) as *mut u32;
-const EVENTS_DATARDY: *mut u32 = (BASE_ADDRESS + 0x100) as *mut u32;
-const INTENSET: *mut u32 = (BASE_ADDRESS + 0x304) as *mut u32;
-const INTENCLR: *mut u32 = (BASE_ADDRESS + 0x308) as *mut u32;
-const TEMP: *mut u32 = (BASE_ADDRESS + 0x508) as *mut u32;
+use crate::traits::Register;
+use core::ptr::NonNull;
 
-pub fn read() -> u32 {
-    unsafe { core::ptr::read_volatile(TEMP) }
+pub const TEMP0: Temp = Temp::new(0x4000_C000);
+
+pub struct Temp {
+    base_addr: NonNull<u8>,
 }
 
-pub fn start() {
-    unsafe { core::ptr::write_volatile(TASKS_START, 1) }
-}
+impl Temp {
+    pub const fn new(base_addr: usize) -> Self {
+        Self {
+            base_addr: unsafe { NonNull::new_unchecked(base_addr as *mut u8) },
+        }
+    }
 
-pub fn stop() {
-    unsafe { core::ptr::write_volatile(TASKS_STOP, 1) }
-}
+    pub fn read(&self) -> u32 {
+        self.read_reg(0x508)
+    }
 
-pub fn is_ready() -> bool {
-    unsafe { core::ptr::read_volatile(EVENTS_DATARDY) & 1 != 0 }
-}
+    pub fn start(&self) {
+        self.write_reg(0, 1u32);
+    }
 
-pub fn clear() {
-    unsafe {
-        core::ptr::write_volatile(TEMP, 0);
-        core::ptr::write_volatile(EVENTS_DATARDY, 0);
+    pub fn stop(&self) {
+        self.write_reg(0x004, 1u32);
+    }
+
+    pub fn is_ready(&self) -> bool {
+        self.read_reg(0x100) & 1 != 0
+    }
+
+    pub fn clear(&self) {
+        self.write_reg(0x508, 0u32);
+        self.write_reg(0x100, 0u32);
     }
 }
+
+impl Register for Temp {
+    fn base_addr(&self) -> NonNull<u8> {
+        self.base_addr
+    }
+}
+
+unsafe impl Sync for Temp {}
+unsafe impl Send for Temp {}

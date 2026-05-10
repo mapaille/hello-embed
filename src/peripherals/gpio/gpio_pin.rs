@@ -83,15 +83,6 @@ impl GpioPin {
     }
 
     #[inline]
-    pub fn set(&self, state: bool) {
-        if state {
-            self.set_high();
-        } else {
-            self.set_low();
-        }
-    }
-
-    #[inline]
     pub fn toggle(&self) {
         if self.is_high() {
             self.set_low();

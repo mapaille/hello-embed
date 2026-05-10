@@ -17,7 +17,7 @@ impl Program for TemperatureAlertProgram {
     fn run(&self, app: &App) {
         app.hardware.speaker.stop();
         while !app.cancellation_token.is_cancelled() {
-            match app.hardware.temperature_sensor.read_temperature() {
+            match app.hardware.thermometer.read_temperature() {
                 Some(temperature) => {
                     if temperature <= TEMPERATURE_THRESHOLD {
                         app.hardware.speaker.set_frequency(SOUND_FREQUENCY);
